@@ -55,9 +55,7 @@ public class MainActivity extends FragmentActivity
         FragmentManager fragmentManager = getSupportFragmentManager();
         String fragmentName = getResources().getStringArray(R.array.navigation_drawer_strings)[position];
         Fragment fragment = null;
-        if (fragmentName.equals(getResources().getString(R.string.default_username))) {
-            //do nothing
-        } else if (fragmentName.equals(getResources().getString(R.string.my_groups))) {
+        if (fragmentName.equals(getResources().getString(R.string.my_groups))) {
             Log.e("yay", fragmentName);
         } else if (fragmentName.equals(getResources().getString(R.string.new_group))) {
             Log.e("yay", fragmentName);
@@ -68,6 +66,9 @@ public class MainActivity extends FragmentActivity
         } else if (fragmentName.equals(getResources().getString(R.string.settings))) {
             //TODO: pass the username
             fragment = SettingsFragment.newInstance("");
+        } else if (fragmentName.equals(getResources().getString(R.string.firebasetest))) {
+            Intent intent = new Intent(this, TestFirebaseActivity.class);
+            startActivity(intent);
         }
 
         mTitle = fragmentName;
