@@ -62,10 +62,11 @@ public class MainActivity extends FragmentActivity
         } else if (fragmentName.equals(getResources().getString(R.string.new_group))) {
             Log.e("yay", fragmentName);
         } else if (fragmentName.equals(getResources().getString(R.string.search_groups))) {
-            Log.e("yay", fragmentName);
+            fragment = SearchGroupsFragment.newInstance();
         } else if (fragmentName.equals(getResources().getString(R.string.my_availability))) {
             Log.e("yay", fragmentName);
         } else if (fragmentName.equals(getResources().getString(R.string.settings))) {
+            //TODO: pass the username
             fragment = SettingsFragment.newInstance("");
         }
 

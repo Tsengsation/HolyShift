@@ -20,6 +20,7 @@
         <item>@string/settings</item>
     </string-array>
 
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- Settings Fragment -->
+    <string name="settings_notificationsswitch">Toggle Notifications</string>
 
 </resources>
