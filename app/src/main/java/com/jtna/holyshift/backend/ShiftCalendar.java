@@ -5,6 +5,6 @@ import java.util.List;
 /**
  * Created by Nishad Agrawal on 11/15/14.
  */
-public class Availability {
-    List<AvailabilitySlot> myAvail;
+public class ShiftCalendar {
+    private List<Shift> myShifts;
 }
