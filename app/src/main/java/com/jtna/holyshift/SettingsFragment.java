@@ -64,6 +64,7 @@ public class SettingsFragment extends Fragment {
         mNotificationsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                //TODO: update firebase
                 mUsernameTextView.setText("username " + isChecked);
             }
         });

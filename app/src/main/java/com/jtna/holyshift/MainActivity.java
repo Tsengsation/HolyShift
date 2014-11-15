@@ -41,8 +41,8 @@ public class MainActivity extends FragmentActivity
 
         //Starts the Login/Signup Activity
         Intent intent = new Intent(this, LoginActivity.class);
-        //TODO: comment out
-        //startActivity(intent);
+        //TODO: uncomment out
+        startActivity(intent);
     }
 
     @Override

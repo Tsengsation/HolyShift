@@ -7,7 +7,7 @@
 
     <string name="title_activity_test_firebase">TestFirebaseActivity</string>
     <string name="hello_world">Hello world!</string>
-    <string name="default_username">UserNameDefault</string>
+
     <string name="new_group">Create New Group</string>
     <string name="my_groups">My Groups</string>
     <string name="search_groups">Search Groups</string>
