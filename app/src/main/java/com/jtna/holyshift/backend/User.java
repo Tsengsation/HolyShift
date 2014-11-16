@@ -56,4 +56,5 @@ public class User {
     public void setMyAvail(Availability myAvail) {
         this.myAvail = myAvail;
     }
+
 }

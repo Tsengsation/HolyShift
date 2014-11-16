@@ -11,6 +11,11 @@ public class AvailabilitySlot extends TimeSlot {
         isAvailable = true;
     }
 
+    public AvailabilitySlot(boolean avail, Day d, int hr) {
+        super(d, hr);
+        isAvailable = avail;
+    }
+
     public boolean isAvailable() {
         return isAvailable;
     }
