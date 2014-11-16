@@ -71,6 +71,9 @@ public class MainActivity extends FragmentActivity
         } else if (fragmentName.equals(getResources().getString(R.string.firebasetest))) {
             Intent intent = new Intent(this, TestFirebaseActivity.class);
             startActivity(intent);
+        } else if (fragmentName.equals(getString(R.string.firebasetest2))) {
+            Intent intent = new Intent(this, TestBackEndActivity.class);
+            startActivity(intent);
         }
 
         mTitle = fragmentName;

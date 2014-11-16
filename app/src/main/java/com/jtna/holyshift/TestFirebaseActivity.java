@@ -7,15 +7,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
 import com.jtna.holyshift.backend.Day;
 import com.jtna.holyshift.backend.Group;
 import com.jtna.holyshift.backend.Shift;
-import com.jtna.holyshift.backend.ShiftCalendar;
 import com.jtna.holyshift.backend.User;
 
 import java.util.ArrayList;
@@ -28,6 +29,11 @@ public class TestFirebaseActivity extends Activity {
     private Firebase rootRef;
     private Firebase usersRef;
     private Firebase groupsRef;
+    private int i;
+    private int j;
+    private Map<String, User> users;
+    private Map<String, Group> groups;
+    private ValueEventListener connectedListener;
 
 
     @Override
@@ -39,6 +45,8 @@ public class TestFirebaseActivity extends Activity {
         rootRef = new Firebase("https://holyshift.firebaseio.com/");
         usersRef = rootRef.child("users");
         groupsRef = rootRef.child("groups");
+        users = new HashMap<String, User>();
+        groups = new HashMap<String, Group>();
 
         Button clear = (Button) findViewById(R.id.button);
         clear.setOnClickListener(new View.OnClickListener() {
@@ -49,26 +57,52 @@ public class TestFirebaseActivity extends Activity {
             }
         });
 
-        Button refresh = (Button) findViewById(R.id.button2);
-        refresh.setOnClickListener(new View.OnClickListener() {
+        Button addUser = (Button) findViewById(R.id.button2);
+        addUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("refresh!");
+                Log.e("asdf","add user");
+                createUser();
+                usersRef.setValue(users, getListener());
+                i++;
             }
         });
 
-//        setUpReceiver();
+        Button addGroup = (Button) findViewById(R.id.button3);
+        addGroup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e("asdf","add group");
+                Group g = createGroup();
+                groupsRef.setValue(groups, getListener());
+                usersRef.setValue(users, getListener());
+                j++;
+            }
+        });
 
-//
-//        Map<String, User> users = createUsers();
-//
-//
-//        Map<String, Group> groups = new HashMap<String, Group>();
-//        Group g = createGroup(users);
-//        groups.put(g.getGroupName(), g);
-//
-//        usersRef.setValue(users, getListener());
-//        groupsRef.setValue(groups, getListener());
+        Query q = groupsRef.orderByKey();
+        q.addValueEventListener(getGroupListener());
+    }
+
+    private ValueEventListener getGroupListener() {
+        return new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                StringBuilder sb = new StringBuilder("Groups: \n");
+                TextView groupText = (TextView) findViewById(R.id.groupTextView);
+                for (DataSnapshot child: snapshot.getChildren()) {
+                    Log.e("groups", child.getKey());
+                    sb.append(child.getKey() + "\n");
+                }
+                groupText.setText(sb.toString());
+            }
+
+            @Override
+            public void onCancelled(FirebaseError error) {
+                Log.e("error", error.getMessage());
+            }
+        };
     }
 
     private Firebase.CompletionListener getListener() {
@@ -84,30 +118,26 @@ public class TestFirebaseActivity extends Activity {
         };
     }
 
-    private Group createGroup(Map<String, User> users) {
+    private Group createGroup() {
         List<Shift> shifts = new ArrayList<Shift>();
         for (int i = 0; i < 24; i++) {
             Shift s = new Shift(Day.SUNDAY, i, 1);
             shifts.add(s);
         }
-        ShiftCalendar cal = new ShiftCalendar(shifts);
-        Group g = new Group("group 1", "group_password",  cal);
+        Group g = new Group("group " + j, "group_password",  shifts);
         for (User user: users.values()) {
             user.addNewGroup(g);
             g.addMember(user);
         }
 
         g.updateAvailability();
+        groups.put(g.getGroupName(), g);
         return g;
     }
 
-    private Map<String, User> createUsers() {
-        Map<String, User> users = new HashMap<String, User>();
-        for (int i = 0; i < 10; i++) {
-            User u = new User("name " + i, "userName"+i, "password");
-            users.put(u.getUserName(), u);
-        }
-        return users;
+    private void createUser() {
+        User u = new User("name " + i, "userName"+i, "password");
+        users.put(u.getUserName(), u);
     }
 
     private void setUpReceiver() {
@@ -126,16 +156,12 @@ public class TestFirebaseActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_test_firebase, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         return super.onOptionsItemSelected(item);
     }
