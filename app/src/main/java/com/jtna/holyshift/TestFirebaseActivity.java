@@ -7,12 +7,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 
+import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
-import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
 import com.jtna.holyshift.backend.Day;
 import com.jtna.holyshift.backend.Group;
@@ -20,7 +19,6 @@ import com.jtna.holyshift.backend.Shift;
 import com.jtna.holyshift.backend.User;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,9 +29,8 @@ public class TestFirebaseActivity extends Activity {
     private Firebase groupsRef;
     private int i;
     private int j;
-    private Map<String, User> users;
-    private Map<String, Group> groups;
-    private ValueEventListener connectedListener;
+    private List<User> users;
+    private List<Group> groups;
 
 
     @Override
@@ -45,15 +42,15 @@ public class TestFirebaseActivity extends Activity {
         rootRef = new Firebase("https://holyshift.firebaseio.com/");
         usersRef = rootRef.child("users");
         groupsRef = rootRef.child("groups");
-        users = new HashMap<String, User>();
-        groups = new HashMap<String, Group>();
+        users = new ArrayList<User>();
+        groups = new ArrayList<Group>();
 
         Button clear = (Button) findViewById(R.id.button);
         clear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 rootRef.removeValue();
-
+                users.clear();
             }
         });
 
@@ -63,7 +60,6 @@ public class TestFirebaseActivity extends Activity {
             public void onClick(View v) {
                 Log.e("asdf","add user");
                 createUser();
-                usersRef.setValue(users, getListener());
                 i++;
             }
         });
@@ -73,29 +69,43 @@ public class TestFirebaseActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Log.e("asdf","add group");
-                Group g = createGroup();
-                groupsRef.setValue(groups, getListener());
-                usersRef.setValue(users, getListener());
+                createGroup();
                 j++;
             }
         });
 
-        Query q = groupsRef.orderByKey();
-        q.addValueEventListener(getGroupListener());
+        groupsRef.addChildEventListener(getGroupListener());
+
+
     }
 
-    private ValueEventListener getGroupListener() {
-        return new ValueEventListener() {
+
+    private ChildEventListener getGroupListener() {
+        return new ChildEventListener() {
 
             @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                StringBuilder sb = new StringBuilder("Groups: \n");
-                TextView groupText = (TextView) findViewById(R.id.groupTextView);
-                for (DataSnapshot child: snapshot.getChildren()) {
-                    Log.e("groups", child.getKey());
-                    sb.append(child.getKey() + "\n");
-                }
-                groupText.setText(sb.toString());
+            public void onChildAdded(DataSnapshot snapshot, String previousChildKey) {
+                Map<String, Object> group = (Map<String, Object>) snapshot.getValue();
+                Group g = new Group((List<User>)group.get("members"),
+                        (List<Shift>) group.get("myShifts"),
+                        (String) group.get("groupName"),
+                        (String) group.get("password"));
+                Log.e("group", g.getGroupName());
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot snapshot, String previousChildKey) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot snapshot, String previousChildKey) {
+
             }
 
             @Override
@@ -118,26 +128,33 @@ public class TestFirebaseActivity extends Activity {
         };
     }
 
-    private Group createGroup() {
+    private void createGroup() {
         List<Shift> shifts = new ArrayList<Shift>();
         for (int i = 0; i < 24; i++) {
             Shift s = new Shift(Day.SUNDAY, i, 1);
             shifts.add(s);
         }
         Group g = new Group("group " + j, "group_password",  shifts);
-        for (User user: users.values()) {
+
+
+        for (User user: users) {
             user.addNewGroup(g);
             g.addMember(user);
         }
 
+        for (User user: users) {
+            usersRef.child(user.getUserName()).setValue(user);
+        }
+
         g.updateAvailability();
-        groups.put(g.getGroupName(), g);
-        return g;
+        Firebase newGroup = groupsRef.push();
+        newGroup.setValue(g);
     }
 
     private void createUser() {
         User u = new User("name " + i, "userName"+i, "password");
-        users.put(u.getUserName(), u);
+        users.add(u);
+        usersRef.child(u.getUserName()).setValue(u);
     }
 
     private void setUpReceiver() {
