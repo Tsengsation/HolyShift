@@ -11,6 +11,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.jtna.holyshift.GroupTabbedView.GroupFragment;
+
 
 public class MainActivity extends FragmentActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks{
@@ -56,7 +58,7 @@ public class MainActivity extends FragmentActivity
         String fragmentName = getResources().getStringArray(R.array.navigation_drawer_strings)[position];
         Fragment fragment = null;
         if (fragmentName.equals(getResources().getString(R.string.my_groups))) {
-            Log.e("yay", fragmentName);
+            fragment = GroupFragment.newInstance("");
         } else if (fragmentName.equals(getResources().getString(R.string.new_group))) {
             Log.e("yay", fragmentName);
         } else if (fragmentName.equals(getResources().getString(R.string.search_groups))) {
