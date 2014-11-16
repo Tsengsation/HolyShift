@@ -1,6 +1,8 @@
 package com.jtna.holyshift;
 
 
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.Gravity;
@@ -10,21 +12,23 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.ToggleButton;
 
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link CalendarFragment#newInstance} factory method to
+ * Use the {@link ToggleCalendarFragment#newInstance} factory method to
  * create an instance of this fragment.
  *
  */
-public class CalendarFragment extends Fragment {
+public class ToggleCalendarFragment extends Fragment {
     private static final String ARG_GROUPNAME = "groupName";
+
+    private static final int SELECTED_COLOR = Color.GREEN;
+    private static final int UNSELECTED_COLOR = Color.BLACK;
 
     private String mGroupName;
 
-    private ToggleButton[][] mCalendarGrid;
+    private CalendarCell[][] mCalendarGrid;
 
     private LinearLayout mCalendar;
     private String[] mColumns = new String[] {
@@ -46,15 +50,15 @@ public class CalendarFragment extends Fragment {
      * @return A new instance of fragment CalendarFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static CalendarFragment newInstance(String groupName) {
-        CalendarFragment fragment = new CalendarFragment();
+    public static ToggleCalendarFragment newInstance(String groupName) {
+        ToggleCalendarFragment fragment = new ToggleCalendarFragment();
         Bundle args = new Bundle();
         args.putString(ARG_GROUPNAME, groupName);
         fragment.setArguments(args);
         return fragment;
     }
-    public CalendarFragment() {
-        mCalendarGrid = new ToggleButton[24][7];
+    public ToggleCalendarFragment() {
+        mCalendarGrid = new CalendarCell[24][7];
     }
 
     @Override
@@ -83,12 +87,18 @@ public class CalendarFragment extends Fragment {
             mCalendar.addView(createRow(i));
         }
 
-        for (ToggleButton[] row : mCalendarGrid) {
-            for (ToggleButton butt : row) {
-                butt.setOnClickListener(new View.OnClickListener() {
+        for (int i = 0; i < mCalendarGrid.length; i++) {
+            for (int j = 0; j < mCalendarGrid[0].length; j++) {
+                mCalendarGrid[i][j].setBackgroundColor(UNSELECTED_COLOR);
+                mCalendarGrid[i][j].setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        int color = ((ColorDrawable)((CalendarCell)v).getBackground()).getColor();
+                        if (color == SELECTED_COLOR) {
+                            v.setBackgroundColor(UNSELECTED_COLOR);
+                        } else {
+                            v.setBackgroundColor(SELECTED_COLOR);
+                        }
                     }
                 });
             }
@@ -122,16 +132,11 @@ public class CalendarFragment extends Fragment {
         text.setText(hour + ":00");
         row.addView(text, 0);
         for (int i = 0; i < mColumns.length-1; i++) {
-            ToggleButton b = new ToggleButton(getActivity());
-            b.setText("");
-            b.setTextOff("");
-            b.setTextOn("");
-            b.setLayoutParams(layoutParams);
-            row.addView(b, i + 1);
-            mCalendarGrid[hour][i] = b;
+            CalendarCell cell = new CalendarCell(getActivity());
+            row.addView(cell, i + 1);
+            mCalendarGrid[hour][i] = cell;
         }
         return row;
     }
-
 
 }
