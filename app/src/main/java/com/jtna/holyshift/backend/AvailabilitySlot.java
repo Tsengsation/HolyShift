@@ -5,4 +5,17 @@ package com.jtna.holyshift.backend;
  */
 public class AvailabilitySlot extends TimeSlot {
     private boolean isAvailable;
+
+    public AvailabilitySlot(Day d, int hr) {
+        super(d, hr);
+        isAvailable = true;
+    }
+
+    public boolean isAvailable() {
+        return isAvailable;
+    }
+
+    public void setAvailable(boolean isAvailable) {
+        this.isAvailable = isAvailable;
+    }
 }
