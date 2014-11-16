@@ -21,6 +21,14 @@ public class User {
         myAvail = new Availability();
     }
 
+    public User(String fullName, String userName, String password, List<String> myGroups, Availability myAvail) {
+        this.fullName = fullName;
+        this.userName = userName;
+        this.password = password;
+        this.myGroups = myGroups;
+        this.myAvail = myAvail;
+    }
+
     public String getFullName() {
         return fullName;
     }
