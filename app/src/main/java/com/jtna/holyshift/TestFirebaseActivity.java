@@ -57,7 +57,7 @@ public class TestFirebaseActivity extends Activity {
             }
         });
 
-        setUpReceiver();
+//        setUpReceiver();
 
 //
 //        Map<String, User> users = createUsers();
