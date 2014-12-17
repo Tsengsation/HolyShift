@@ -5,26 +5,13 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.parse.Parse;
-import com.parse.ParseObject;
-
 
 public class ParseTestActivity extends Activity {
-    private static final String appId = "SaVX1oRI2gqcdn6XqFkW9klBCyX83ezXVERrHNbu";
-    private static final String clientId = "guvwkmkYriof4Fs5nz49vSexcRr8afDwiXhZAm0E";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_parse_test);
-
-        Parse.enableLocalDatastore(this);
-
-        Parse.initialize(this, appId, clientId);
-
-        ParseObject testObject = new ParseObject("TestObject");
-        testObject.put("foo", "bar");
-        testObject.saveInBackground();
     }
 
 
