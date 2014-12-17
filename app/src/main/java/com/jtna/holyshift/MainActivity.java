@@ -68,11 +68,8 @@ public class MainActivity extends FragmentActivity
         } else if (fragmentName.equals(getResources().getString(R.string.settings))) {
             //TODO: pass the username
             fragment = SettingsFragment.newInstance("");
-        } else if (fragmentName.equals(getResources().getString(R.string.firebasetest))) {
-            Intent intent = new Intent(this, TestFirebaseActivity.class);
-            startActivity(intent);
-        } else if (fragmentName.equals(getString(R.string.firebasetest2))) {
-            Intent intent = new Intent(this, TestBackEndActivity.class);
+        } else if (fragmentName.equals(getString(R.string.parse_test))) {
+            Intent intent = new Intent(this, ParseTestActivity.class);
             startActivity(intent);
         }
 
