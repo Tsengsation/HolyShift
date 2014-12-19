@@ -9,6 +9,7 @@ project.group = 'com.facebook.android'
 dependencies {
     compile 'com.android.support:support-v4:[20,21)'
     compile 'com.parse.bolts:bolts-android:1.1.2'
+    compile files('libs/bolts-android-1.1.2.jar')
 }
 
 android {
