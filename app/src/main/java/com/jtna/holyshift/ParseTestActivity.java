@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.parse.ui.ParseLoginBuilder;
+
 
 public class ParseTestActivity extends Activity {
 
@@ -12,6 +14,9 @@ public class ParseTestActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_parse_test);
+
+        ParseLoginBuilder builder = new ParseLoginBuilder(this);
+        startActivityForResult(builder.build(), 0);
     }
 
 
