@@ -1,17 +1,25 @@
 package com.jtna.holyshift.backend;
 
+import com.parse.ParseClassName;
+import com.parse.ParseObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Nishad Agrawal on 11/15/14.
  */
-public class User {
+@ParseClassName("User")
+public class User extends ParseObject {
     private String fullName;
     private String userName;
     private String password;
     private List<String> myGroups;
     private Availability myAvail;
+
+    public User() {
+        super();
+    }
 
     public User(String fullName, String userName, String password) {
         this.fullName = fullName;
@@ -42,15 +50,15 @@ public class User {
     }
 
     public List<String> getMyGroups() {
-        return myGroups;
+        return (List<String>) get("myGroups");
     }
 
     public void setMyGroups(List<String> myGroups) {
-        this.myGroups = myGroups;
+        put("myGroups", myGroups);
     }
 
     public void addNewGroup(Group g) {
-        myGroups.add(g.getGroupName());
+        add("myGroups", g);
     }
 
     public void leaveGroup(Group g) {

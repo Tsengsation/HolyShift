@@ -15,7 +15,6 @@ public class HolyShiftApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
         Parse.initialize(this, appId, clientId);
     }
 }

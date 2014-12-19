@@ -1,8 +1,11 @@
 package com.jtna.holyshift.backend;
 
+import com.parse.ParseClassName;
+
 /**
  * Created by Nishad Agrawal on 11/15/14.
  */
+@ParseClassName("AvailabilitySlot")
 public class AvailabilitySlot extends TimeSlot {
     private boolean isAvailable;
 
