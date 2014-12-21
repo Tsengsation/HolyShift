@@ -8,20 +8,21 @@ import com.parse.ParseObject;
  */
 @ParseClassName("TimeSlot")
 public abstract class TimeSlot extends ParseObject {
-    protected Day myDay;
-    protected int startHr;
+
+    private static final String MY_DAY = "myDay";
+    private static final String START_HR = "startHr";
 
     protected TimeSlot(Day d, int hr) {
-        myDay = d;
-        startHr = hr;
+        put(MY_DAY, d.name());
+        put(START_HR, hr);
     }
 
     public Day getMyDay() {
-        return myDay;
+        return Day.valueOf(getString(MY_DAY));
     }
 
     public int getStartHr() {
-        return startHr;
+        return getInt(START_HR);
     }
 
     @Override

@@ -2,7 +2,13 @@ package com.jtna.holyshift;
 
 import android.app.Application;
 
+import com.jtna.holyshift.backend.Availability;
+import com.jtna.holyshift.backend.AvailabilitySlot;
+import com.jtna.holyshift.backend.Group;
+import com.jtna.holyshift.backend.Shift;
+import com.jtna.holyshift.backend.TimeSlot;
 import com.parse.Parse;
+import com.parse.ParseObject;
 
 /**
  * Created by Nishad Agrawal on 12/16/14.
@@ -15,6 +21,13 @@ public class HolyShiftApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        ParseObject.registerSubclass(Availability.class);
+        ParseObject.registerSubclass(AvailabilitySlot.class);
+        ParseObject.registerSubclass(Group.class);
+        ParseObject.registerSubclass(Shift.class);
+        ParseObject.registerSubclass(TimeSlot.class);
+
         Parse.initialize(this, appId, clientId);
     }
 }
