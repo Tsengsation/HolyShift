@@ -21,6 +21,10 @@ public class Group extends ParseObject {
     private static final String GROUP_NAME = "groupName";
     private static final String PASSWORD = "password";
 
+    public Group() {
+        this("", "", new ArrayList<Shift>());
+    }
+
     public Group(String groupName, String password,  List<Shift> shifts) {
         this(new ArrayList<ParseUser>(),shifts, groupName, password);
     }

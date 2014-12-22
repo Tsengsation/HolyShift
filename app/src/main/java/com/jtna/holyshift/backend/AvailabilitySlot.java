@@ -10,6 +10,10 @@ public class AvailabilitySlot extends TimeSlot {
 
     private static final String IS_AVAILABLE = "isAvailable";
 
+    public AvailabilitySlot() {
+        this(Day.UNSPECIFIED, 0);
+    }
+
     public AvailabilitySlot(Day d, int hr) {
         this(true, d, hr);
     }

@@ -25,9 +25,8 @@ public class HolyShiftApplication extends Application {
         ParseObject.registerSubclass(Availability.class);
         ParseObject.registerSubclass(AvailabilitySlot.class);
         ParseObject.registerSubclass(Group.class);
-        ParseObject.registerSubclass(Shift.class);
         ParseObject.registerSubclass(TimeSlot.class);
-
+        ParseObject.registerSubclass(Shift.class);
         Parse.initialize(this, appId, clientId);
     }
 }

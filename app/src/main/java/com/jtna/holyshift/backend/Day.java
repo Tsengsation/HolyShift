@@ -5,5 +5,5 @@ package com.jtna.holyshift.backend;
  */
 public enum Day {
     SUNDAY, MONDAY, TUESDAY, WEDNESDAY,
-    THURSDAY, FRIDAY, SATURDAY
+    THURSDAY, FRIDAY, SATURDAY, UNSPECIFIED
 }

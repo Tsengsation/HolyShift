@@ -8,9 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
-import com.jtna.holyshift.LoginActivity;
 import com.jtna.holyshift.R;
 
 /**
@@ -75,20 +73,9 @@ public class GroupSettingsTab extends Fragment {
                     mPasswordEditText.requestFocus();
                     return;
                 }
-                if (LoginActivity.isPasswordValid(mPasswordEditText.getText().toString())) {
-                    firebaseUpdateGroup(mPasswordEditText.getText().toString());
-                    //TODO also pass shifts
-                } else {
-                    mPasswordEditText.setError(getString(R.string.error_invalid_password));
-                    mPasswordEditText.requestFocus();
-                }
+                // TODO: Implement with Parse
             }
         });
-    }
-
-    //TODO: update group through firebase with password and shift assignments
-    private void firebaseUpdateGroup(String password) {
-        Toast.makeText(getActivity(), "yeah buddy", Toast.LENGTH_SHORT).show();
     }
 
 }

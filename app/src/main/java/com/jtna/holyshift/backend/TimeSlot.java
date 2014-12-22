@@ -7,12 +7,16 @@ import com.parse.ParseObject;
  * Created by Nishad Agrawal on 11/15/14.
  */
 @ParseClassName("TimeSlot")
-public abstract class TimeSlot extends ParseObject {
+public class TimeSlot extends ParseObject {
 
     private static final String MY_DAY = "myDay";
     private static final String START_HR = "startHr";
 
-    protected TimeSlot(Day d, int hr) {
+    public TimeSlot() {
+        this(Day.UNSPECIFIED, 0);
+    }
+
+    public TimeSlot(Day d, int hr) {
         put(MY_DAY, d.name());
         put(START_HR, hr);
     }
