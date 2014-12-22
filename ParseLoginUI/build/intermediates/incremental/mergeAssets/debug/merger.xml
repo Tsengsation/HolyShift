@@ -1,2 +1,2 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merger version="3"><dataSet config="main"><source path="/Users/macbook/Documents/nishad/Android/HolyShift/ParseLoginUI/src/main/assets"/></dataSet><dataSet config="debug"><source path="/Users/macbook/Documents/nishad/Android/HolyShift/ParseLoginUI/src/debug/assets"/></dataSet></merger>
+<merger version="3"><dataSet config="main"><source path="/Users/jonathantseng/Documents/GitHub/HolyShift/ParseLoginUI/src/main/assets"/></dataSet><dataSet config="debug"><source path="/Users/jonathantseng/Documents/GitHub/HolyShift/ParseLoginUI/src/debug/assets"/></dataSet></merger>
