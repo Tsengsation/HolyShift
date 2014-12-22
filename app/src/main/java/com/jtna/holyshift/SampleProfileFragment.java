@@ -21,10 +21,12 @@
 
 package com.jtna.holyshift;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -32,10 +34,9 @@ import com.parse.ParseUser;
 import com.parse.ui.ParseLoginBuilder;
 
 /**
- * Shows the user profile. This simple activity can function regardless of whether the user
- * is currently logged in.
+ * Shows the user profile.
  */
-public class SampleProfileActivity extends Activity {
+public class SampleProfileFragment extends Fragment {
     private static final int LOGIN_REQUEST = 0;
 
     private TextView titleTextView;
@@ -45,15 +46,32 @@ public class SampleProfileActivity extends Activity {
 
     private ParseUser currentUser;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     * @return A new instance of fragment SearchGroupsFragment.
+     */
+    public static SampleProfileFragment newInstance() {
+        SampleProfileFragment fragment = new SampleProfileFragment();
+        Bundle args = new Bundle();
+        fragment.setArguments(args);
+        return fragment;
+    }
+    public SampleProfileFragment() {
+        // required empty constructor
+    }
 
-        setContentView(R.layout.activity_sample_profile);
-        titleTextView = (TextView) findViewById(R.id.profile_title);
-        emailTextView = (TextView) findViewById(R.id.profile_email);
-        nameTextView = (TextView) findViewById(R.id.profile_name);
-        loginOrLogoutButton = (Button) findViewById(R.id.login_or_logout_button);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    private void initializeComponents(View rootView) {
+        titleTextView = (TextView) rootView.findViewById(R.id.profile_title);
+        emailTextView = (TextView) rootView.findViewById(R.id.profile_email);
+        nameTextView = (TextView) rootView.findViewById(R.id.profile_name);
+        loginOrLogoutButton = (Button) rootView.findViewById(R.id.login_or_logout_button);
         titleTextView.setText(R.string.profile_title_logged_in);
 
         loginOrLogoutButton.setOnClickListener(new OnClickListener() {
@@ -67,7 +85,7 @@ public class SampleProfileActivity extends Activity {
                 } else {
                     // User clicked to log in.
                     ParseLoginBuilder loginBuilder = new ParseLoginBuilder(
-                            SampleProfileActivity.this);
+                            getActivity());
                     startActivityForResult(loginBuilder.build(), LOGIN_REQUEST);
                 }
             }
@@ -75,7 +93,15 @@ public class SampleProfileActivity extends Activity {
     }
 
     @Override
-    protected void onStart() {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_sample_profile, container, false);
+        initializeComponents(rootView);
+        return rootView;
+    }
+
+    @Override
+    public void onStart() {
         super.onStart();
 
         currentUser = ParseUser.getCurrentUser();

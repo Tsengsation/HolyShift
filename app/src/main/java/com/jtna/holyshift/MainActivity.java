@@ -1,7 +1,6 @@
 package com.jtna.holyshift;
 
 import android.app.ActionBar;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -66,9 +65,7 @@ public class MainActivity extends FragmentActivity
             //TODO: pass the username
             fragment = SettingsFragment.newInstance("");
         } else if (fragmentName.equals(getString(R.string.sample_profile_activity))) {
-            Intent intent = new Intent(this, SampleProfileActivity.class);
-            startActivity(intent);
-
+            fragment = SampleProfileFragment.newInstance();
         }
 
         mTitle = fragmentName;
