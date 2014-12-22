@@ -1,23 +1,32 @@
 package com.jtna.holyshift.backend;
 
+import com.parse.ParseClassName;
+import com.parse.ParseObject;
+
 /**
  * Created by Nishad Agrawal on 11/15/14.
  */
-public abstract class TimeSlot {
-    protected Day myDay;
-    protected int startHr;
+@ParseClassName("TimeSlot")
+public class TimeSlot extends ParseObject {
 
-    protected TimeSlot(Day d, int hr) {
-        myDay = d;
-        startHr = hr;
+    private static final String MY_DAY = "myDay";
+    private static final String START_HR = "startHr";
+
+    public TimeSlot() {
+        this(Day.UNSPECIFIED, 0);
+    }
+
+    public TimeSlot(Day d, int hr) {
+        put(MY_DAY, d.name());
+        put(START_HR, hr);
     }
 
     public Day getMyDay() {
-        return myDay;
+        return Day.valueOf(getString(MY_DAY));
     }
 
     public int getStartHr() {
-        return startHr;
+        return getInt(START_HR);
     }
 
     @Override

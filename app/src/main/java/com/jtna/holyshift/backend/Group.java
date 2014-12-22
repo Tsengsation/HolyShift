@@ -1,6 +1,12 @@
 package com.jtna.holyshift.backend;
 
+import com.parse.ParseClassName;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseUser;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,109 +14,120 @@ import java.util.Map;
 /**
  * Created by Nishad Agrawal on 11/15/14.
  */
-public class Group {
-    private List<User> members;
-    private List<Shift> myShifts;
-    private String groupName;
-    private String password;
+@ParseClassName("Group")
+public class Group extends ParseObject {
+    private static final String MEMBERS = "members";
+    private static final String MY_SHIFTS = "myShifts";
+    private static final String GROUP_NAME = "groupName";
+    private static final String PASSWORD = "password";
+
+    public Group() {
+        this("", "", new ArrayList<Shift>());
+    }
 
     public Group(String groupName, String password,  List<Shift> shifts) {
-        this.password = password;
-        this.groupName = groupName;
-        this.myShifts = shifts;
-        members = new ArrayList<User>();
+        this(new ArrayList<ParseUser>(),shifts, groupName, password);
     }
 
-    public Group(List<User> members, List<Shift> myShifts, String groupName, String password) {
-        this.members = members;
-        this.myShifts = myShifts;
-        this.groupName = groupName;
-        this.password = password;
+    public Group(List<ParseUser> members, List<Shift> shifts, String groupName, String password) {
+        addAllUnique(MEMBERS, members);
+        addAllUnique(MY_SHIFTS, shifts);
+        put(GROUP_NAME, groupName);
+        put(PASSWORD, password);
     }
 
-    public List<User> getMembers() {
-        return members;
+    public List<ParseUser> getMembers() {
+        return getList(MEMBERS);
     }
 
-    public void setMembers(List<User> members) {
-        this.members = members;
+    public void setMembers(List<ParseUser> members) {
+        remove(MEMBERS);
+        addAllUnique(MEMBERS, members);
     }
 
-    public void addMember(User u) {
-        members.add(u);
+    public void addMember(ParseUser u) {
+        addUnique(MEMBERS, u);
     }
 
-    public void removeMember(User u) {
-        members.remove(u);
+    public void removeMember(ParseUser u) {
+        removeAll(MEMBERS, Arrays.asList(u));
     }
 
     public List<Shift> getMyShifts() {
-        return myShifts;
+        return getList(MY_SHIFTS);
     }
 
     public void updateShifts(List<Shift> shifts) {
-        myShifts = shifts;
+        remove(MY_SHIFTS);
+        addAllUnique(MY_SHIFTS, shifts);
     }
 
     public void addShift(Shift s) {
-        myShifts.add(s);
+        addUnique(MY_SHIFTS, s);
     }
 
     public void removeShift(Shift s) {
-        myShifts.remove(s);
+        removeAll(MY_SHIFTS, Arrays.asList(s));
     }
 
     public String getGroupName() {
-        return groupName;
+        return getString(GROUP_NAME);
     }
 
     public String getPassword() {
-        return password;
+        return getString(PASSWORD);
     }
 
     public void updateAvailability() {
-        for (Shift s: myShifts) {
-            for (User u: members) {
-                for (AvailabilitySlot avail: u.getMyAvail().getSlots()) {
-                    if (s.equals(avail) && avail.isAvailable()) {
-                        s.addNewAvailableMember(u);
+        for (Shift s: getMyShifts()) {
+            for (ParseUser u: getMembers()) {
+                try {
+                    for (AvailabilitySlot avail: Availability.getAvailabilityByUser(u).getSlots()) {
+                        if (s.equals(avail) && avail.isAvailable()) {
+                            s.addNewAvailableMember(u);
+                        }
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
+    }
+
+    public void assignShifts() {
+        Map<ParseUser, Integer> shiftCounts = new HashMap<ParseUser, Integer>();
+        for (ParseUser u: getMembers()) {
+            shiftCounts.put(u, new Integer(0));
+        }
+
+        for (Shift shift: getMyShifts()) {
+            for (int i = 0; i < shift.getNumRequired(); i++) {
+                ParseUser assignee = getMostAvailable(shiftCounts, shift);
+                if (assignee != null) {
+                    shift.addAssigned(assignee);
+                    try {
+                        Availability avail = Availability.getAvailabilityByUser(assignee);
+                        avail.updateSlot(new AvailabilitySlot(false, shift.getMyDay(), shift.getStartHr()));
+                        shiftCounts.put(assignee, shiftCounts.get(assignee) + 1);
+                    }
+                    catch (ParseException e) {
+                        e.printStackTrace();
                     }
                 }
             }
         }
     }
 
-    public void assignShifts() {
-        Map<User, Integer> shiftCounts = new HashMap<User, Integer>();
-        for (User u: members) {
-            shiftCounts.put(u, new Integer(0));
-        }
-
-        for (Shift shift: myShifts) {
-            for (int i = 0; i < shift.getNumRequired(); i++) {
-                User assignee = getMostAvailable(shiftCounts, shift);
-                if (assignee != null) {
-                    shift.addAssigned(assignee);
-                    assignee.getMyAvail().updateSlot(new AvailabilitySlot(false, shift.getMyDay(), shift.getStartHr()));
-                    shiftCounts.put(assignee, shiftCounts.get(assignee) + 1);
-                }
-            }
-        }
-    }
-
-    private User getMostAvailable(Map<User, Integer> map, Shift s) {
-        User u = null;
+    private ParseUser getMostAvailable(Map<ParseUser, Integer> map, Shift s) {
+        ParseUser u = null;
         int min = Integer.MAX_VALUE;
-        for (User myUser: map.keySet()) {
+        for (ParseUser myUser: map.keySet()) {
             if (s.getWhosAvailable().contains(myUser) && map.get(myUser) < min) {
                 u = myUser;
                 min = map.get(myUser);
             }
         }
         return u;
-    }
-
-    public List<TimeSlot> getShiftsByUser(User u) {
-        return null;
     }
 }

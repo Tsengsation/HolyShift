@@ -1,26 +1,33 @@
 package com.jtna.holyshift.backend;
 
+import com.parse.ParseClassName;
+
 /**
  * Created by Nishad Agrawal on 11/15/14.
  */
+@ParseClassName("AvailabilitySlot")
 public class AvailabilitySlot extends TimeSlot {
-    private boolean isAvailable;
+
+    private static final String IS_AVAILABLE = "isAvailable";
+
+    public AvailabilitySlot() {
+        this(Day.UNSPECIFIED, 0);
+    }
 
     public AvailabilitySlot(Day d, int hr) {
-        super(d, hr);
-        isAvailable = true;
+        this(true, d, hr);
     }
 
     public AvailabilitySlot(boolean avail, Day d, int hr) {
         super(d, hr);
-        isAvailable = avail;
+        put(IS_AVAILABLE, avail);
     }
 
     public boolean isAvailable() {
-        return isAvailable;
+        return getBoolean(IS_AVAILABLE);
     }
 
     public void setAvailable(boolean isAvailable) {
-        this.isAvailable = isAvailable;
+        put(IS_AVAILABLE, isAvailable);
     }
 }

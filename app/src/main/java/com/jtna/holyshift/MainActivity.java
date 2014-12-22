@@ -1,7 +1,6 @@
 package com.jtna.holyshift;
 
 import android.app.ActionBar;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -42,9 +41,6 @@ public class MainActivity extends FragmentActivity
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
         //Starts the Login/Signup Activity
-        Intent intent = new Intent(this, LoginActivity.class);
-        //TODO: uncomment out
-        //startActivity(intent);
     }
 
     @Override
@@ -68,12 +64,8 @@ public class MainActivity extends FragmentActivity
         } else if (fragmentName.equals(getResources().getString(R.string.settings))) {
             //TODO: pass the username
             fragment = SettingsFragment.newInstance("");
-        } else if (fragmentName.equals(getResources().getString(R.string.firebasetest))) {
-            Intent intent = new Intent(this, TestFirebaseActivity.class);
-            startActivity(intent);
-        } else if (fragmentName.equals(getString(R.string.firebasetest2))) {
-            Intent intent = new Intent(this, TestBackEndActivity.class);
-            startActivity(intent);
+        } else if (fragmentName.equals(getString(R.string.sample_profile_activity))) {
+            fragment = SampleProfileFragment.newInstance();
         }
 
         mTitle = fragmentName;
