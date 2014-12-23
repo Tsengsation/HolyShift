@@ -1,14 +1,12 @@
-package com.jtna.holyshift.GroupTabbedView;
+package com.jtna.holyshift;
 
 import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.jtna.holyshift.R;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,7 +26,6 @@ public class ParseTestFragment extends Fragment {
      *
      * @return A new instance of fragment ParseTestFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static ParseTestFragment newInstance() {
         ParseTestFragment fragment = new ParseTestFragment();
         Bundle args = new Bundle();

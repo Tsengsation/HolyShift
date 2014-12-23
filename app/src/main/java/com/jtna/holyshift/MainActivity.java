@@ -64,8 +64,10 @@ public class MainActivity extends FragmentActivity
         } else if (fragmentName.equals(getResources().getString(R.string.settings))) {
             //TODO: pass the username
             fragment = SettingsFragment.newInstance("");
-        } else if (fragmentName.equals(getString(R.string.sample_profile_activity))) {
+        } else if (fragmentName.equals(getString(R.string.sample_profile_fragment))) {
             fragment = SampleProfileFragment.newInstance();
+        } else if (fragmentName.equals(getString(R.string.parse_test_fragment))) {
+            fragment = ParseTestFragment.newInstance();
         }
 
         mTitle = fragmentName;

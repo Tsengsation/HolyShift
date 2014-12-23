@@ -11,7 +11,8 @@
     <string name="search_groups">Search Groups</string>
     <string name="my_availability">My Availability</string>
     <string name="settings">Settings</string>
-    <string name="sample_profile_activity">Sample Profile</string>
+    <string name="sample_profile_fragment">Sample Profile</string>
+    <string name="parse_test_fragment">Parse Tests</string>
 
     <string-array name="navigation_drawer_strings">
         <item>@string/my_groups</item>
@@ -19,8 +20,8 @@
         <item>@string/search_groups</item>
         <item>@string/my_availability</item>
         <item>@string/settings</item>
-        <item>@string/sample_profile_activity</item>
-
+        <item>@string/sample_profile_fragment</item>
+        <item>@string/parse_test_fragment</item>
     </string-array>
 
     <!-- Settings Fragment -->
