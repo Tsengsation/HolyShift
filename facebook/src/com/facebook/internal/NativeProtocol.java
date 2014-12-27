@@ -618,7 +618,6 @@ public final class NativeProtocol {
             return new FacebookOperationCanceledException(description);
         }
 
-        /* TODO parse error values and create appropriate exception class */
         return new FacebookException(description);
     }
 

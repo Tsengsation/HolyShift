@@ -36,7 +36,7 @@ import com.parse.ui.ParseLoginBuilder;
 /**
  * Shows the user profile.
  */
-public class SampleProfileFragment extends Fragment {
+public class ProfileFragment extends Fragment {
     private static final int LOGIN_REQUEST = 0;
 
     private TextView titleTextView;
@@ -52,13 +52,13 @@ public class SampleProfileFragment extends Fragment {
      *
      * @return A new instance of fragment SearchGroupsFragment.
      */
-    public static SampleProfileFragment newInstance() {
-        SampleProfileFragment fragment = new SampleProfileFragment();
+    public static ProfileFragment newInstance() {
+        ProfileFragment fragment = new ProfileFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
     }
-    public SampleProfileFragment() {
+    public ProfileFragment() {
         // required empty constructor
     }
 
@@ -95,7 +95,7 @@ public class SampleProfileFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_sample_profile, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
         initializeComponents(rootView);
         return rootView;
     }

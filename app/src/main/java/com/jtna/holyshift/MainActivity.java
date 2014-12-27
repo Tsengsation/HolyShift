@@ -65,8 +65,15 @@ public class MainActivity extends FragmentActivity
             fragment = SearchGroupsFragment.newInstance();
         } else if (fragmentName.equals(getResources().getString(R.string.my_availability))) {
             fragment = CalendarFragment.newInstance();
-        } else if (fragmentName.equals(getString(R.string.sample_profile_fragment))) {
-            fragment = SampleProfileFragment.newInstance();
+            ((CalendarFragment) fragment).setSaveListener(new CalendarListener() {
+
+                @Override
+                public void onSaveClicked(CalendarFragment cal) {
+
+                }
+            });
+        } else if (fragmentName.equals(getString(R.string.profile_fragment))) {
+            fragment = ProfileFragment.newInstance();
         } else if (fragmentName.equals(getString(R.string.parse_test_fragment))) {
             fragment = ParseTestFragment.newInstance();
         }
@@ -121,8 +128,15 @@ public class MainActivity extends FragmentActivity
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         CalendarFragment fragment = CalendarFragment.newInstance();
-        // TODO: eliminate this and replace with passing of on save consumer / listener
-        fragment.setGroupNameAndPassword(name.getText().toString(), password.getText().toString());
+        fragment.setSaveListener(new CalendarListener() {
+
+            @Override
+            public void onSaveClicked(CalendarFragment cal) {
+                // TODO: create group with given shifts here
+                // fragment.setGroupNameAndPassword(name.getText().toString(), password.getText().toString());
+            }
+        });
+
         mTitle = "New Group";
 
         if (fragment != null) {

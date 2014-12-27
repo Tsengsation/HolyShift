@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -30,8 +29,8 @@ import java.util.List;
 public class CalendarFragment extends Fragment {
     private static final String ARG_GROUPNAME = "groupName";
 
-    private static final int SELECTED_COLOR = Color.GREEN;
-    private static final int UNSELECTED_COLOR = Color.BLACK;
+    private static final int SELECTED_COLOR = Color.BLUE;
+    private static final int UNSELECTED_COLOR = Color.GRAY;
 
     private CalendarCell[][] mCalendarGrid;
     private List<CalendarCell> selected;
@@ -49,6 +48,8 @@ public class CalendarFragment extends Fragment {
         "FRI",
         "SAT"
     };
+
+    private CalendarListener myListener;
 
     /**
      * Use this factory method to create a new instance of
@@ -82,14 +83,22 @@ public class CalendarFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.save:
-                // TODO
-                Log.d("MENU", "save stuff");
+                if (myListener != null) {
+                    myListener.onSaveClicked(CalendarFragment.this);
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
+    /**
+     * Make sure this gets called to have save functionality;
+     * @param listener
+     */
+    public void setSaveListener(CalendarListener listener) {
+        myListener = listener;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -98,11 +107,6 @@ public class CalendarFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_calendar, container, false);
         initializeComponent(rootView);
         return rootView;
-    }
-
-    public void setGroupNameAndPassword(String groupName, String password) {
-        myGroupName = groupName;
-        myPassword = password;
     }
 
     private void initializeComponent(View root) {
