@@ -69,7 +69,7 @@ public class GroupSettingsTab extends Fragment {
             public void onClick(View v) {
                 mPasswordEditText.setError(null);
                 if (mPasswordEditText.getText().toString().isEmpty()) {
-                    mPasswordEditText.setError(getString(R.string.error_field_required));
+                    mPasswordEditText.setError("Field Required");
                     mPasswordEditText.requestFocus();
                     return;
                 }

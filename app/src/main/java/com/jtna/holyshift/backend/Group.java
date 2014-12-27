@@ -16,7 +16,7 @@ import java.util.Map;
  */
 @ParseClassName("Group")
 public class Group extends ParseObject {
-    private static final String MEMBERS = "members";
+    private static final String USERS = "users";
     private static final String MY_SHIFTS = "myShifts";
     private static final String GROUP_NAME = "groupName";
     private static final String PASSWORD = "password";
@@ -29,28 +29,28 @@ public class Group extends ParseObject {
         this(new ArrayList<ParseUser>(),shifts, groupName, password);
     }
 
-    public Group(List<ParseUser> members, List<Shift> shifts, String groupName, String password) {
-        addAllUnique(MEMBERS, members);
+    public Group(List<ParseUser> users, List<Shift> shifts, String groupName, String password) {
+        addAllUnique(USERS, users);
         addAllUnique(MY_SHIFTS, shifts);
         put(GROUP_NAME, groupName);
         put(PASSWORD, password);
     }
 
-    public List<ParseUser> getMembers() {
-        return getList(MEMBERS);
+    public List<ParseUser> getUsers() {
+        return getList(USERS);
     }
 
-    public void setMembers(List<ParseUser> members) {
-        remove(MEMBERS);
-        addAllUnique(MEMBERS, members);
+    public void setUsers(List<ParseUser> users) {
+        remove(USERS);
+        addAllUnique(USERS, users);
     }
 
-    public void addMember(ParseUser u) {
-        addUnique(MEMBERS, u);
+    public void addUser(ParseUser u) {
+        addUnique(USERS, u);
     }
 
-    public void removeMember(ParseUser u) {
-        removeAll(MEMBERS, Arrays.asList(u));
+    public void removeUser(ParseUser u) {
+        removeAll(USERS, Arrays.asList(u));
     }
 
     public List<Shift> getMyShifts() {
@@ -80,11 +80,11 @@ public class Group extends ParseObject {
 
     public void updateAvailability() {
         for (Shift s: getMyShifts()) {
-            for (ParseUser u: getMembers()) {
+            for (ParseUser u: getUsers()) {
                 try {
                     for (AvailabilitySlot avail: Availability.getAvailabilityByUser(u).getSlots()) {
                         if (s.equals(avail) && avail.isAvailable()) {
-                            s.addNewAvailableMember(u);
+                            s.addAvailable(u);
                         }
                     }
                 } catch (ParseException e) {
@@ -97,7 +97,7 @@ public class Group extends ParseObject {
 
     public void assignShifts() {
         Map<ParseUser, Integer> shiftCounts = new HashMap<ParseUser, Integer>();
-        for (ParseUser u: getMembers()) {
+        for (ParseUser u: getUsers()) {
             shiftCounts.put(u, new Integer(0));
         }
 

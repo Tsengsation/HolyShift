@@ -42,7 +42,7 @@ public class Shift extends TimeSlot {
         addAllUnique(WHOS_AVAILABLE, whosAvailable);
     }
 
-    public void addNewAvailableMember(ParseUser u) {
+    public void addAvailable(ParseUser u) {
         addUnique(WHOS_AVAILABLE, u);
     }
 
