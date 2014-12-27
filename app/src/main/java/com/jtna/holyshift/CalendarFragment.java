@@ -83,9 +83,16 @@ public class CalendarFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.save:
-                if (myListener != null) {
-                    myListener.onSaveClicked(CalendarFragment.this);
+                if (myListener == null) {
+                    myListener = new CalendarListener() {
+
+                        @Override
+                        public void onSaveClicked(CalendarFragment cal) {
+
+                        }
+                    };
                 }
+                myListener.onSaveClicked(CalendarFragment.this);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

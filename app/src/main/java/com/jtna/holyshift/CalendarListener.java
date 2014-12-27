@@ -3,14 +3,12 @@ package com.jtna.holyshift;
 /**
  * Created by Nishad Agrawal on 12/26/14.
  */
-public class CalendarListener {
+public abstract class CalendarListener {
 
     /**
-     * Default Implementation
+     *
      *
      * @param cal
      */
-    public void onSaveClicked(CalendarFragment cal) {
-        // TODO
-    }
+    public abstract void onSaveClicked(CalendarFragment cal);
 }

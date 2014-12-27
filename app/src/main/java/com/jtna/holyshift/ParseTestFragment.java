@@ -141,7 +141,6 @@ public class ParseTestFragment extends Fragment {
         assignShiftsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO
                 Log.e("PARSE TEST", "to be implemented");
             }
         });
