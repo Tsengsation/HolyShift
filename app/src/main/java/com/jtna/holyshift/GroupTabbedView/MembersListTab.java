@@ -33,12 +33,13 @@ public class MembersListTab extends Fragment {
     public static MembersListTab newInstance() {
         MembersListTab fragment = new MembersListTab();
         Bundle args = new Bundle();
+        args.
         fragment.setArguments(args);
         return fragment;
     }
 
     public MembersListTab() {
-        // TODO: Query for members list/use firebase list adapter jank
+        // TODO: Query for members list
     }
 
     @Override

@@ -5,8 +5,12 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -31,6 +35,8 @@ public class CalendarFragment extends Fragment {
 
     private CalendarCell[][] mCalendarGrid;
     private List<CalendarCell> selected;
+    private String myGroupName;
+    private String myPassword;
 
     private LinearLayout mCalendar;
     private String[] mColumns = new String[] {
@@ -64,7 +70,26 @@ public class CalendarFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         selected = new ArrayList<>();
+        setHasOptionsMenu(true);
     }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_calendar, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.save:
+                // TODO
+                Log.d("MENU", "save stuff");
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -73,6 +98,11 @@ public class CalendarFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_calendar, container, false);
         initializeComponent(rootView);
         return rootView;
+    }
+
+    public void setGroupNameAndPassword(String groupName, String password) {
+        myGroupName = groupName;
+        myPassword = password;
     }
 
     private void initializeComponent(View root) {

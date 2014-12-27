@@ -31,7 +31,6 @@ public class GroupFragment extends Fragment {
      * @param groupName name of the group.
      * @return A new instance of fragment GroupFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static GroupFragment newInstance(String groupName) {
         GroupFragment fragment = new GroupFragment();
         Bundle args = new Bundle();

@@ -64,8 +64,7 @@ public class MainActivity extends FragmentActivity
         } else if (fragmentName.equals(getResources().getString(R.string.search_groups))) {
             fragment = SearchGroupsFragment.newInstance();
         } else if (fragmentName.equals(getResources().getString(R.string.my_availability))) {
-            // TODO
-            Log.e("yay", fragmentName);
+            fragment = CalendarFragment.newInstance();
         } else if (fragmentName.equals(getString(R.string.sample_profile_fragment))) {
             fragment = SampleProfileFragment.newInstance();
         } else if (fragmentName.equals(getString(R.string.parse_test_fragment))) {
@@ -119,12 +118,12 @@ public class MainActivity extends FragmentActivity
         CreateGroupDialogFragment myDialog = (CreateGroupDialogFragment) dialog;
         EditText name = myDialog.getGroupNameEditText();
         EditText password = myDialog.getPasswordEditText();
-        Log.d("CREATE GROUP", "Name: " + name.getText().toString());
-        Log.d("CREATE GROUP", "Password: " + password.getText().toString());
 
         FragmentManager fragmentManager = getSupportFragmentManager();
-        Fragment fragment = CalendarFragment.newInstance();
-        mTitle = "createGroupShifts";
+        CalendarFragment fragment = CalendarFragment.newInstance();
+        // TODO: eliminate this and replace with passing of on save consumer / listener
+        fragment.setGroupNameAndPassword(name.getText().toString(), password.getText().toString());
+        mTitle = "New Group";
 
         if (fragment != null) {
             fragmentManager.beginTransaction()
