@@ -3,6 +3,7 @@ package com.jtna.holyshift.backend;
 import com.parse.ParseClassName;
 import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
@@ -76,6 +77,10 @@ public class Group extends ParseObject {
 
     public String getPassword() {
         return getString(PASSWORD);
+    }
+
+    public static ParseQuery<Group> getQuery() {
+        return ParseQuery.getQuery(Group.class);
     }
 
     public void updateAvailability() {

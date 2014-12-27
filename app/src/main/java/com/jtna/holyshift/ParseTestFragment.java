@@ -15,7 +15,6 @@ import com.jtna.holyshift.backend.Availability;
 import com.jtna.holyshift.backend.Day;
 import com.jtna.holyshift.backend.Group;
 import com.jtna.holyshift.backend.Shift;
-import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -103,10 +102,9 @@ public class ParseTestFragment extends Fragment {
                 if (!groupNameEditText.getText().toString().isEmpty() &&
                         !passwordEditText.getText().toString().isEmpty() &&
                         !myShifts.isEmpty()) {
-                    myGroup = new Group(groupNameEditText.getText().toString(),
+                    ParseUtility.createGroup(groupNameEditText.getText().toString(),
                             passwordEditText.getText().toString(),
                             myShifts);
-                    myGroup.saveInBackground();
                     Log.d("PARSE TEST", "group set");
                 }
             }
@@ -116,12 +114,8 @@ public class ParseTestFragment extends Fragment {
         setAvailabilityButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Availability avail = new Availability();
-                avail.saveInBackground();
-                Log.d("PARSE TEST", "created user availability");
-                avail.setUser(ParseUser.getCurrentUser());
-                avail.saveInBackground();
-                Log.d("PARSE TEST", "set avail parse user to me");
+                Availability avail = ParseUtility.getAvailability();
+                Log.d("PARSE TEST", "availability retrieved");
             }
         });
 
@@ -130,8 +124,7 @@ public class ParseTestFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (myGroup != null) {
-                    myGroup.addUser(ParseUser.getCurrentUser());
-                    myGroup.saveInBackground();
+                    ParseUtility.joinGroup(myGroup);
                     Log.d("PARSE TEST", "user added to group");
                 }
             }
@@ -141,6 +134,7 @@ public class ParseTestFragment extends Fragment {
         assignShiftsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Log.e("PARSE TEST", "to be implemented");
             }
         });
