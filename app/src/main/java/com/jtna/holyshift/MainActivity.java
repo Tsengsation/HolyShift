@@ -56,10 +56,12 @@ public class MainActivity extends FragmentActivity
         if (fragmentName.equals(getResources().getString(R.string.my_groups))) {
             fragment = GroupFragment.newInstance("");
         } else if (fragmentName.equals(getResources().getString(R.string.new_group))) {
+            // TODO
             Log.e("yay", fragmentName);
         } else if (fragmentName.equals(getResources().getString(R.string.search_groups))) {
             fragment = SearchGroupsFragment.newInstance();
         } else if (fragmentName.equals(getResources().getString(R.string.my_availability))) {
+            // TODO
             Log.e("yay", fragmentName);
         } else if (fragmentName.equals(getResources().getString(R.string.settings))) {
             //TODO: pass the username

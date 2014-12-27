@@ -20,7 +20,7 @@ public class Availability extends ParseObject {
 
     public Availability() {
         List<AvailabilitySlot> slots = new ArrayList<>();
-        for (Day d: Day.values()) {
+        for (Day d: Day.getDaysOfWeek()) {
             for (int hr = 0; hr < 24; hr++) {
                 slots.add(new AvailabilitySlot(d, hr));
             }

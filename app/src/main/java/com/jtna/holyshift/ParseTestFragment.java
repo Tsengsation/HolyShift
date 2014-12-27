@@ -67,7 +67,7 @@ public class ParseTestFragment extends Fragment {
     private void initializeComponents(View rootView) {
         daySpinner = (Spinner) rootView.findViewById(R.id.day_spinner);
         daySpinner.setAdapter(new ArrayAdapter<>(this.getActivity(),
-                android.R.layout.simple_spinner_item, Day.values()));
+                android.R.layout.simple_spinner_item, Day.getDaysOfWeek()));
 
         shiftStartEditText = (EditText) rootView.findViewById(R.id.shiftStartEditText);
         numberRequiredEditText = (EditText) rootView.findViewById(R.id.numberRequiredEditText);
