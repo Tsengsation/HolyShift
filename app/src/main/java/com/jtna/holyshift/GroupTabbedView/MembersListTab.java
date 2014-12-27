@@ -22,36 +22,23 @@ import java.util.List;
  */
 public class MembersListTab extends Fragment {
     private static final String ARG_GROUPNAME = "groupName";
-
-    private String mGroupName;
     private ListView mMembersListView;
 
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param groupName name of group.
      * @return A new instance of fragment MembersListTab.
      */
-    // TODO: Rename and change types and number of parameters
-    public static MembersListTab newInstance(String groupName) {
+    public static MembersListTab newInstance() {
         MembersListTab fragment = new MembersListTab();
         Bundle args = new Bundle();
-        args.putString(ARG_GROUPNAME, groupName);
         fragment.setArguments(args);
         return fragment;
     }
 
     public MembersListTab() {
         // TODO: Query for members list/use firebase list adapter jank
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mGroupName = getArguments().getString(ARG_GROUPNAME);
-        }
     }
 
     @Override
@@ -66,25 +53,8 @@ public class MembersListTab extends Fragment {
     private void initializeComponents(View root) {
         mMembersListView = (ListView) root.findViewById(R.id.group_listview_members);
 
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         list.add("1");
-        list.add("1");
-        list.add("1");
-        list.add("1");
-        list.add("1");
-        list.add("1");
-        list.add("1");
-        list.add("1");
-        list.add("1");
-        list.add("1");
-        list.add("1");
-        list.add("1");
-        list.add("1");
-        list.add("1");
-        list.add("1");
-        list.add("1");
-        list.add("1");
-
 
         final ArrayAdapter<String> adapter = new ArrayAdapter<String>(root.getContext(), android.R.layout.simple_list_item_1, list);
         mMembersListView.setAdapter(adapter);

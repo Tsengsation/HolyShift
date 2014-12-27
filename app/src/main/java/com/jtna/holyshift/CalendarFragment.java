@@ -13,22 +13,24 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link ToggleCalendarFragment#newInstance} factory method to
+ * Use the {@link CalendarFragment#newInstance} factory method to
  * create an instance of this fragment.
  *
  */
-public class ToggleCalendarFragment extends Fragment {
+public class CalendarFragment extends Fragment {
     private static final String ARG_GROUPNAME = "groupName";
 
     private static final int SELECTED_COLOR = Color.GREEN;
     private static final int UNSELECTED_COLOR = Color.BLACK;
 
-    private String mGroupName;
-
     private CalendarCell[][] mCalendarGrid;
+    private List<CalendarCell> selected;
 
     private LinearLayout mCalendar;
     private String[] mColumns = new String[] {
@@ -46,27 +48,22 @@ public class ToggleCalendarFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param groupName name of group
      * @return A new instance of fragment CalendarFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static ToggleCalendarFragment newInstance(String groupName) {
-        ToggleCalendarFragment fragment = new ToggleCalendarFragment();
+    public static CalendarFragment newInstance() {
+        CalendarFragment fragment = new CalendarFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_GROUPNAME, groupName);
         fragment.setArguments(args);
         return fragment;
     }
-    public ToggleCalendarFragment() {
+    public CalendarFragment() {
         mCalendarGrid = new CalendarCell[24][7];
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mGroupName = getArguments().getString(ARG_GROUPNAME);
-        }
+        selected = new ArrayList<>();
     }
 
     @Override
@@ -80,7 +77,8 @@ public class ToggleCalendarFragment extends Fragment {
 
     private void initializeComponent(View root) {
         mCalendar = (LinearLayout) root.findViewById(R.id.calendar_tablelayout);
-        mCalendar.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+        mCalendar.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.MATCH_PARENT));
 
         mCalendar.addView(createTableHeader());
         for (int i = 0; i < 24; i++) {
@@ -96,8 +94,10 @@ public class ToggleCalendarFragment extends Fragment {
                         int color = ((ColorDrawable)((CalendarCell)v).getBackground()).getColor();
                         if (color == SELECTED_COLOR) {
                             v.setBackgroundColor(UNSELECTED_COLOR);
+                            selected.remove(v);
                         } else {
                             v.setBackgroundColor(SELECTED_COLOR);
+                            selected.add((CalendarCell) v);
                         }
                     }
                 });
@@ -109,10 +109,13 @@ public class ToggleCalendarFragment extends Fragment {
     private LinearLayout createTableHeader() {
         LinearLayout row = new LinearLayout(getActivity());
         row.setOrientation(LinearLayout.HORIZONTAL);
-        row.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        row.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT));
+
         for (int i = 0; i < mColumns.length; i++) {
             TextView view = new TextView(getActivity());
-            view.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
+            view.setLayoutParams(new LinearLayout.LayoutParams(0,
+                    LinearLayout.LayoutParams.WRAP_CONTENT, 1));
             view.setText(mColumns[i]);
             view.setGravity(Gravity.CENTER);
             row.addView(view, i);
@@ -121,18 +124,20 @@ public class ToggleCalendarFragment extends Fragment {
     }
 
     private LinearLayout createRow(int hour) {
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(0,
+                LinearLayout.LayoutParams.WRAP_CONTENT, 1);
         layoutParams.setMargins(0,0,0,0);
 
         LinearLayout row = new LinearLayout(getActivity());
         row.setOrientation(LinearLayout.HORIZONTAL);
-        row.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        row.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT));
         TextView text = new TextView(getActivity());
         text.setLayoutParams(layoutParams);
         text.setText(hour + ":00");
         row.addView(text, 0);
         for (int i = 0; i < mColumns.length-1; i++) {
-            CalendarCell cell = new CalendarCell(getActivity());
+            CalendarCell cell = new CalendarCell(getActivity(), i, hour);
             row.addView(cell, i + 1);
             mCalendarGrid[hour][i] = cell;
         }

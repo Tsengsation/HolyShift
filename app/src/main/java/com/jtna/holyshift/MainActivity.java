@@ -2,6 +2,7 @@ package com.jtna.holyshift;
 
 import android.app.ActionBar;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -9,12 +10,14 @@ import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 
 import com.jtna.holyshift.GroupTabbedView.GroupFragment;
 
 
 public class MainActivity extends FragmentActivity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks{
+        implements NavigationDrawerFragment.NavigationDrawerCallbacks,
+        CreateGroupDialogFragment.DialogListener{
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -56,16 +59,13 @@ public class MainActivity extends FragmentActivity
         if (fragmentName.equals(getResources().getString(R.string.my_groups))) {
             fragment = GroupFragment.newInstance("");
         } else if (fragmentName.equals(getResources().getString(R.string.new_group))) {
-            // TODO
-            Log.e("yay", fragmentName);
+            DialogFragment newFragment = new CreateGroupDialogFragment();
+            newFragment.show(getSupportFragmentManager(), "Create Group");
         } else if (fragmentName.equals(getResources().getString(R.string.search_groups))) {
             fragment = SearchGroupsFragment.newInstance();
         } else if (fragmentName.equals(getResources().getString(R.string.my_availability))) {
             // TODO
             Log.e("yay", fragmentName);
-        } else if (fragmentName.equals(getResources().getString(R.string.settings))) {
-            //TODO: pass the username
-            fragment = SettingsFragment.newInstance("");
         } else if (fragmentName.equals(getString(R.string.sample_profile_fragment))) {
             fragment = SampleProfileFragment.newInstance();
         } else if (fragmentName.equals(getString(R.string.parse_test_fragment))) {
@@ -114,4 +114,25 @@ public class MainActivity extends FragmentActivity
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+        CreateGroupDialogFragment myDialog = (CreateGroupDialogFragment) dialog;
+        EditText name = myDialog.getGroupNameEditText();
+        EditText password = myDialog.getPasswordEditText();
+        Log.d("CREATE GROUP", "Name: " + name.getText().toString());
+        Log.d("CREATE GROUP", "Password: " + password.getText().toString());
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment fragment = CalendarFragment.newInstance();
+        mTitle = "createGroupShifts";
+
+        if (fragment != null) {
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, fragment)
+                    .commit();
+        } else {
+            // error in creating fragment
+            Log.e("MainActivity", "Error in creating fragment");
+        }
+    }
 }

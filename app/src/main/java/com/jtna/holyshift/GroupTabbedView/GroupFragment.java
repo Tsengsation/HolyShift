@@ -8,7 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.jtna.holyshift.ToggleCalendarFragment;
+import com.jtna.holyshift.CalendarFragment;
 import com.jtna.holyshift.R;
 
 /**
@@ -63,9 +63,16 @@ public class GroupFragment extends Fragment {
     private void initializeComponents(View root) {
         mTabHost = (FragmentTabHost) root.findViewById(android.R.id.tabhost);
         mTabHost.setup(getActivity(), getChildFragmentManager(), R.id.tabcontent);
-        mTabHost.addTab(mTabHost.newTabSpec(getString(R.string.group_members)).setIndicator(getString(R.string.group_members)), MembersListTab.class, null);
-        mTabHost.addTab(mTabHost.newTabSpec(getString(R.string.group_settings)).setIndicator(getString(R.string.group_settings)), GroupSettingsTab.class, null);
-        mTabHost.addTab(mTabHost.newTabSpec("what").setIndicator("what"), ToggleCalendarFragment.class, null);
+
+        mTabHost.addTab(mTabHost.newTabSpec(getString(R.string.group_members))
+                .setIndicator(getString(R.string.group_members)), MembersListTab.class, null);
+
+        mTabHost.addTab(mTabHost.newTabSpec(getString(R.string.group_shifts))
+                .setIndicator(getString(R.string.group_shifts)),
+                CalendarFragment.class, null);
+
+        mTabHost.addTab(mTabHost.newTabSpec(getString(R.string.group_settings))
+                .setIndicator(getString(R.string.group_settings)), GroupSettingsTab.class, null);
     }
 
 }

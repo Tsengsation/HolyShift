@@ -20,8 +20,6 @@ import com.jtna.holyshift.R;
 public class GroupSettingsTab extends Fragment {
     private static final String ARG_GROUPNAME = "groupName";
 
-    private String mGroupName;
-
     private EditText mPasswordEditText;
     private Button mUpdateButton;
 
@@ -29,27 +27,16 @@ public class GroupSettingsTab extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param groupName name of group.
      * @return A new instance of fragment GroupSettingsTab.
      */
-    // TODO: Rename and change types and number of parameters
-    public static GroupSettingsTab newInstance(String groupName) {
+    public static GroupSettingsTab newInstance() {
         GroupSettingsTab fragment = new GroupSettingsTab();
         Bundle args = new Bundle();
-        args.putString(ARG_GROUPNAME, groupName);
         fragment.setArguments(args);
         return fragment;
     }
     public GroupSettingsTab() {
         // Required empty public constructor
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mGroupName = getArguments().getString(ARG_GROUPNAME);
-        }
     }
 
     @Override
