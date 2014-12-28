@@ -1,7 +1,9 @@
 package com.jtna.holyshift;
 
 import android.app.ActionBar;
+import android.app.ProgressDialog;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -51,7 +53,8 @@ public class MainActivity extends FragmentActivity
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
-        myAvail = ParseUtility.getAvailability();
+        FetchDataTask fetchDataTask = new FetchDataTask();
+        fetchDataTask.execute();
     }
 
     @Override
@@ -68,7 +71,7 @@ public class MainActivity extends FragmentActivity
             fragment = GroupFragment.newInstance("");
         } else if (fragmentName.equals(getResources().getString(R.string.new_group))) {
             DialogFragment newFragment = new CreateGroupDialogFragment();
-            newFragment.show(getSupportFragmentManager(), "Create Group");
+            newFragment.show(getSupportFragmentManager(), getString(R.string.new_group));
         } else if (fragmentName.equals(getResources().getString(R.string.search_groups))) {
             fragment = SearchGroupsFragment.newInstance();
         } else if (fragmentName.equals(getResources().getString(R.string.my_availability))) {
@@ -178,7 +181,7 @@ public class MainActivity extends FragmentActivity
             }
         });
 
-        mTitle = "New Group";
+        mTitle = getString(R.string.new_group);
 
         if (fragment != null) {
             fragmentManager.beginTransaction()
@@ -189,4 +192,30 @@ public class MainActivity extends FragmentActivity
             Log.e("MainActivity", "Error in creating fragment");
         }
     }
+
+    private class FetchDataTask extends AsyncTask<Void, Integer, Availability> {
+        private ProgressDialog dialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog = new ProgressDialog(MainActivity.this);
+            dialog.setMessage("Fetching Data From Server...");
+            dialog.setCancelable(false);
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.show();
+        }
+
+        @Override
+        protected Availability doInBackground(Void... params) {
+            return ParseUtility.getAvailability();
+        }
+
+        @Override
+        protected void onPostExecute(Availability avail) {
+            myAvail = avail;
+            dialog.dismiss();
+        }
+    }
+
 }
