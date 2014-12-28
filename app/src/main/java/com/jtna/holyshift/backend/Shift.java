@@ -17,7 +17,7 @@ public class Shift extends TimeSlot {
     private static final String WHOS_ASSIGNED = "whosAssigned";
 
     public Shift() {
-        this(Day.UNSPECIFIED, 0, 0);
+        super();
     }
 
     public Shift(Day d, int hr, int required) {

@@ -1,7 +1,6 @@
 package com.jtna.holyshift.backend;
 
 import com.parse.ParseClassName;
-import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -23,7 +22,7 @@ public class Group extends ParseObject {
     private static final String PASSWORD = "password";
 
     public Group() {
-        this("", "", new ArrayList<Shift>());
+        super();
     }
 
     public Group(String groupName, String password,  List<Shift> shifts) {
@@ -86,16 +85,11 @@ public class Group extends ParseObject {
     public void updateAvailability() {
         for (Shift s: getMyShifts()) {
             for (ParseUser u: getUsers()) {
-                try {
-                    for (AvailabilitySlot avail: Availability.getAvailabilityByUser(u).getSlots()) {
-                        if (s.equals(avail) && avail.isAvailable()) {
-                            s.addAvailable(u);
-                        }
+                for (AvailabilitySlot avail: Availability.getAvailabilityByUser(u).getSlots()) {
+                    if (s.equals(avail) && avail.isAvailable()) {
+                        s.addAvailable(u);
                     }
-                } catch (ParseException e) {
-                    e.printStackTrace();
                 }
-
             }
         }
     }
@@ -111,14 +105,9 @@ public class Group extends ParseObject {
                 ParseUser assignee = getMostAvailable(shiftCounts, shift);
                 if (assignee != null) {
                     shift.addAssigned(assignee);
-                    try {
-                        Availability avail = Availability.getAvailabilityByUser(assignee);
-                        avail.updateSlot(new AvailabilitySlot(false, shift.getMyDay(), shift.getStartHr()));
-                        shiftCounts.put(assignee, shiftCounts.get(assignee) + 1);
-                    }
-                    catch (ParseException e) {
-                        e.printStackTrace();
-                    }
+                    Availability avail = Availability.getAvailabilityByUser(assignee);
+                    avail.updateSlot(new AvailabilitySlot(false, shift.getMyDay(), shift.getStartHr()));
+                    shiftCounts.put(assignee, shiftCounts.get(assignee) + 1);
                 }
             }
         }

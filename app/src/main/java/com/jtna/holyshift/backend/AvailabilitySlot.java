@@ -11,7 +11,11 @@ public class AvailabilitySlot extends TimeSlot {
     private static final String IS_AVAILABLE = "isAvailable";
 
     public AvailabilitySlot() {
-        this(Day.UNSPECIFIED, 0);
+        super();
+    }
+
+    public AvailabilitySlot(boolean b, TimeSlot slot) {
+        this(b, slot.getMyDay(), slot.getStartHr());
     }
 
     public AvailabilitySlot(Day d, int hr) {

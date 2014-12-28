@@ -16,7 +16,9 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+import com.jtna.holyshift.backend.Day;
+import com.jtna.holyshift.backend.TimeSlot;
+
 import java.util.List;
 
 
@@ -29,11 +31,11 @@ import java.util.List;
 public class CalendarFragment extends Fragment {
     private static final String ARG_GROUPNAME = "groupName";
 
-    private static final int SELECTED_COLOR = Color.BLUE;
-    private static final int UNSELECTED_COLOR = Color.GRAY;
+    private static int SELECTED_COLOR = Color.BLUE;
+    private static int UNSELECTED_COLOR = Color.GRAY;
 
     private CalendarCell[][] mCalendarGrid;
-    private List<CalendarCell> selected;
+    private List<TimeSlot> selected;
     private String myGroupName;
     private String myPassword;
 
@@ -70,7 +72,6 @@ public class CalendarFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        selected = new ArrayList<>();
         setHasOptionsMenu(true);
     }
 
@@ -107,6 +108,22 @@ public class CalendarFragment extends Fragment {
         myListener = listener;
     }
 
+    public void setSelectedColor(int color) {
+        SELECTED_COLOR = color;
+    }
+
+    public void setUnselectedColor(int color) {
+        UNSELECTED_COLOR = color;
+    }
+
+    public void setCells(List<TimeSlot> selectedSlots) {
+        selected = selectedSlots;
+    }
+
+    public List<TimeSlot> getSelectedCells() {
+        return selected;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -125,20 +142,36 @@ public class CalendarFragment extends Fragment {
         for (int i = 0; i < 24; i++) {
             mCalendar.addView(createRow(i));
         }
-
         for (int i = 0; i < mCalendarGrid.length; i++) {
             for (int j = 0; j < mCalendarGrid[0].length; j++) {
-                mCalendarGrid[i][j].setBackgroundColor(UNSELECTED_COLOR);
+                CalendarCell cell = mCalendarGrid[i][j];
+                boolean isSelected = false;
+                for (TimeSlot slot: selected) {
+                    if (slot.getMyDay().ordinal() == cell.getMyDay()
+                            && slot.getStartHr() == cell.getMyHour()) {
+                        isSelected = true;
+                        break;
+                    }
+                }
+                if (isSelected) {
+                    mCalendarGrid[i][j].setBackgroundColor(SELECTED_COLOR);
+                }
+                else {
+                    mCalendarGrid[i][j].setBackgroundColor(UNSELECTED_COLOR);
+                }
                 mCalendarGrid[i][j].setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        int color = ((ColorDrawable)((CalendarCell)v).getBackground()).getColor();
+                        CalendarCell cell = (CalendarCell) v;
+                        int color = ((ColorDrawable) cell.getBackground()).getColor();
+                        TimeSlot slot = new TimeSlot(Day.values()[cell.getMyDay()],
+                                cell.getMyHour());
                         if (color == SELECTED_COLOR) {
                             v.setBackgroundColor(UNSELECTED_COLOR);
-                            selected.remove(v);
+                            selected.remove(slot);
                         } else {
                             v.setBackgroundColor(SELECTED_COLOR);
-                            selected.add((CalendarCell) v);
+                            selected.add(slot);
                         }
                     }
                 });

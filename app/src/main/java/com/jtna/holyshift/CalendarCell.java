@@ -18,6 +18,8 @@ public class CalendarCell extends Button {
                 LinearLayout.LayoutParams.WRAP_CONTENT, 1);
         layoutParams.setMargins(2,2,2,2);
         setLayoutParams(layoutParams);
+        myDay = day;
+        myHour = hour;
     }
 
     public int getMyDay() {

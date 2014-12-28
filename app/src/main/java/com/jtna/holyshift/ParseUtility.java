@@ -3,6 +3,7 @@ package com.jtna.holyshift;
 import android.util.Log;
 
 import com.jtna.holyshift.backend.Availability;
+import com.jtna.holyshift.backend.AvailabilitySlot;
 import com.jtna.holyshift.backend.Group;
 import com.jtna.holyshift.backend.Shift;
 import com.parse.FindCallback;
@@ -20,16 +21,26 @@ import java.util.List;
 public class ParseUtility {
 
     public static Availability getAvailability() {
-        try {
-            return Availability.getAvailabilityByUser(ParseUser.getCurrentUser());
-        } catch (ParseException e) {
-            Log.d("PARSE", e.getMessage());
-            Availability avail = new Availability();
+        Availability avail = Availability.getAvailabilityByUser(ParseUser.getCurrentUser());
+        if (avail == null) {
+            Log.d("PARSE", "no existing availability");
+            avail = new Availability();
+            avail.initialize();
             avail.saveInBackground();
             avail.setUser(ParseUser.getCurrentUser());
             avail.saveInBackground();
-            return avail;
         }
+        else {
+            try {
+                avail = avail.fetchIfNeeded();
+                for (AvailabilitySlot slot: avail.getSlots()) {
+                    slot.fetchIfNeeded();
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        return avail;
     }
 
     public static Group createGroup(String groupName, String password, List<Shift> shifts) {

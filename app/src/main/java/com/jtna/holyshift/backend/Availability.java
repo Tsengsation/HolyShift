@@ -19,8 +19,12 @@ public class Availability extends ParseObject {
     private static final String MY_AVAIL = "myAvail";
 
     public Availability() {
+        super();
+    }
+
+    public void initialize() {
         List<AvailabilitySlot> slots = new ArrayList<>();
-        for (Day d: Day.getDaysOfWeek()) {
+        for (Day d: Day.values()) {
             for (int hr = 0; hr < 24; hr++) {
                 slots.add(new AvailabilitySlot(d, hr));
             }
@@ -53,10 +57,15 @@ public class Availability extends ParseObject {
         return ParseQuery.getQuery(Availability.class);
     }
 
-    public static Availability getAvailabilityByUser(ParseUser u) throws ParseException {
+    public static Availability getAvailabilityByUser(ParseUser u) {
         ParseQuery<Availability> query = Availability.getQuery();
         query.whereEqualTo(USER, u);
-        return query.getFirst();
+        try {
+            return query.getFirst();
+        }
+        catch (ParseException e) {
+            return null;
+        }
     }
 
 

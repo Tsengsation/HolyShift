@@ -1,6 +1,7 @@
 package com.jtna.holyshift;
 
 import android.app.ActionBar;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -13,11 +14,19 @@ import android.view.MenuItem;
 import android.widget.EditText;
 
 import com.jtna.holyshift.GroupTabbedView.GroupFragment;
+import com.jtna.holyshift.backend.Availability;
+import com.jtna.holyshift.backend.AvailabilitySlot;
+import com.jtna.holyshift.backend.TimeSlot;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends FragmentActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks,
         CreateGroupDialogFragment.DialogListener{
+
+    private Availability myAvail;
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -42,8 +51,7 @@ public class MainActivity extends FragmentActivity
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
-
-        //Starts the Login/Signup Activity
+        myAvail = ParseUtility.getAvailability();
     }
 
     @Override
@@ -65,13 +73,7 @@ public class MainActivity extends FragmentActivity
             fragment = SearchGroupsFragment.newInstance();
         } else if (fragmentName.equals(getResources().getString(R.string.my_availability))) {
             fragment = CalendarFragment.newInstance();
-            ((CalendarFragment) fragment).setSaveListener(new CalendarListener() {
-
-                @Override
-                public void onSaveClicked(CalendarFragment cal) {
-
-                }
-            });
+            initAvailabilityCalendar((CalendarFragment) fragment);
         } else if (fragmentName.equals(getString(R.string.profile_fragment))) {
             fragment = ProfileFragment.newInstance();
         } else if (fragmentName.equals(getString(R.string.parse_test_fragment))) {
@@ -88,6 +90,45 @@ public class MainActivity extends FragmentActivity
             // error in creating fragment
             Log.e("MainActivity", "Error in creating fragment");
         }
+    }
+
+    private void initAvailabilityCalendar(CalendarFragment fragment) {
+        fragment.setCells(getAvailableTimeSlots());
+        fragment.setSelectedColor(Color.GREEN);
+        fragment.setUnselectedColor(Color.RED);
+        fragment.setSaveListener(new CalendarListener() {
+            @Override
+            public void onSaveClicked(CalendarFragment cal) {
+                List<TimeSlot> selected = cal.getSelectedCells();
+                for (AvailabilitySlot availSlot: myAvail.getSlots()) {
+                    boolean isSelected = false;
+                    for (TimeSlot slot: selected) {
+                        if (slot.getMyDay().equals(availSlot.getMyDay())
+                                && slot.getStartHr() == availSlot.getStartHr()) {
+                            isSelected = true;
+                            break;
+                        }
+                    }
+                    if (isSelected != availSlot.isAvailable()) {
+                        availSlot.setAvailable(isSelected);
+                        availSlot.saveInBackground();
+                    }
+                }
+                myAvail.saveInBackground();
+            }
+        });
+    }
+
+    private List<TimeSlot> getAvailableTimeSlots() {
+        List<AvailabilitySlot> selected = myAvail.getSlots();
+
+        List<TimeSlot> selectedSlots = new ArrayList<>();
+        for (AvailabilitySlot slot: selected) {
+            if (slot.isAvailable()) {
+                selectedSlots.add(slot);
+            }
+        }
+        return selectedSlots;
     }
 
     public void restoreActionBar() {

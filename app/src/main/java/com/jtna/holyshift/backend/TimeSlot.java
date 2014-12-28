@@ -13,7 +13,7 @@ public class TimeSlot extends ParseObject {
     private static final String START_HR = "startHr";
 
     public TimeSlot() {
-        this(Day.UNSPECIFIED, 0);
+        super();
     }
 
     public TimeSlot(Day d, int hr) {
