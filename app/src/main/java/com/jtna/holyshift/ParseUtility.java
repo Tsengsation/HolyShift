@@ -46,6 +46,7 @@ public class ParseUtility {
     public static Group createGroup(String groupName, String password, List<Shift> shifts) {
         Group g = new Group(groupName, password, shifts);
         g.saveInBackground();
+        joinGroup(password, g);
         return g;
     }
 
