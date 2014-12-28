@@ -1,5 +1,7 @@
 package com.jtna.holyshift;
 
+import android.app.ProgressDialog;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -12,6 +14,8 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.jtna.holyshift.backend.Group;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +31,9 @@ public class SearchGroupsFragment extends Fragment {
 
     private EditText mSearchEditText;
     private ListView mGroupsListView;
-    private List<String> mGroups;
+    private List<String> myGroupNames;
+    private List<Group> myGroups;
+    private ArrayAdapter<String> adapter;
 
     /**
      * Use this factory method to create a new instance of
@@ -43,24 +49,21 @@ public class SearchGroupsFragment extends Fragment {
     }
     public SearchGroupsFragment() {
         // Required empty public constructor
-        //TODO: get list of groups
-        mGroups = new ArrayList<String>();
-        mGroups.add("temp1");
-        mGroups.add("temp2");
-        mGroups.add("temp3");
-        mGroups.add("apple");
-        mGroups.add("applepie");
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        myGroupNames = new ArrayList<String>();
+        FetchGroupTask task = new FetchGroupTask();
+        task.execute();
     }
 
     private void initializeComponents(View rootView) {
         mSearchEditText = (EditText) rootView.findViewById(R.id.search_edittext_groupquery);
         mGroupsListView = (ListView) rootView.findViewById(R.id.search_listview_groupslist);
-        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(rootView.getContext(), android.R.layout.simple_list_item_1, mGroups);
+        adapter = new ArrayAdapter<>(rootView.getContext(), android.R.layout.simple_list_item_1, myGroupNames);
+
         mGroupsListView.setAdapter(adapter);
         mGroupsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -90,6 +93,35 @@ public class SearchGroupsFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_search_groups, container, false);
         initializeComponents(rootView);
         return rootView;
+    }
+
+    private class FetchGroupTask extends AsyncTask<Void, Integer, List<Group>> {
+        private ProgressDialog dialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog = new ProgressDialog(getActivity());
+            dialog.setMessage("Fetching Data From Server...");
+            dialog.setCancelable(false);
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.show();
+        }
+
+        @Override
+        protected List<Group> doInBackground(Void... params) {
+            return ParseUtility.getAllGroups();
+        }
+
+        @Override
+        protected void onPostExecute(List<Group> groups) {
+            myGroups = groups;
+            for (Group g: myGroups) {
+                myGroupNames.add(g.getGroupName());
+            }
+            adapter.notifyDataSetChanged();
+            dialog.dismiss();
+        }
     }
 
 }

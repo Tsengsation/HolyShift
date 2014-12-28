@@ -50,15 +50,13 @@ public class ParseUtility {
     }
 
     public static List<Group> getAllGroups() {
-        final List<Group> allGroups = new ArrayList<>();
         ParseQuery<Group> query = Group.getQuery();
-        query.findInBackground(new FindCallback<Group>() {
-            @Override
-            public void done(List<Group> results, ParseException e) {
-                allGroups.addAll(results);
-            }
-        });
-        return allGroups;
+        try {
+            return query.find();
+        }
+        catch (ParseException e) {
+            return new ArrayList<>();
+        }
     }
 
     public static void joinGroup(Group group) {
