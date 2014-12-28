@@ -11,4 +11,6 @@ public abstract class CalendarListener {
      * @param cal
      */
     public abstract void onSaveClicked(CalendarFragment cal);
+
+    public abstract void onCellClicked(CalendarFragment cal, CalendarCell cell);
 }

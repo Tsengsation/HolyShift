@@ -86,10 +86,23 @@ public class CalendarFragment extends Fragment {
             case R.id.save:
                 if (myListener == null) {
                     myListener = new CalendarListener() {
-
                         @Override
                         public void onSaveClicked(CalendarFragment cal) {
 
+                        }
+
+                        @Override
+                        public void onCellClicked(CalendarFragment cal, CalendarCell cell) {
+                            int color = ((ColorDrawable) cell.getBackground()).getColor();
+                            TimeSlot slot = new TimeSlot(Day.values()[cell.getMyDay()],
+                                    cell.getMyHour());
+                            if (color == SELECTED_COLOR) {
+                                cell.setBackgroundColor(UNSELECTED_COLOR);
+                                selected.remove(slot);
+                            } else {
+                                cell.setBackgroundColor(SELECTED_COLOR);
+                                selected.add(slot);
+                            }
                         }
                     };
                 }
@@ -163,16 +176,7 @@ public class CalendarFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         CalendarCell cell = (CalendarCell) v;
-                        int color = ((ColorDrawable) cell.getBackground()).getColor();
-                        TimeSlot slot = new TimeSlot(Day.values()[cell.getMyDay()],
-                                cell.getMyHour());
-                        if (color == SELECTED_COLOR) {
-                            v.setBackgroundColor(UNSELECTED_COLOR);
-                            selected.remove(slot);
-                        } else {
-                            v.setBackgroundColor(SELECTED_COLOR);
-                            selected.add(slot);
-                        }
+                        myListener.onCellClicked(CalendarFragment.this, cell);
                     }
                 });
             }

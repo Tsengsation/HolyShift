@@ -7,16 +7,15 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
+import android.widget.NumberPicker;
 
 /**
  * Created by Nishad Agrawal on 12/26/14.
  */
-public class CreateGroupDialogFragment extends DialogFragment {
+public class PickerDialogFragment extends DialogFragment {
 
     private DialogListener myListener;
-    private EditText groupNameEditText;
-    private EditText passwordEditText;
+    NumberPicker numPicker;
 
     public void setDialogListener(DialogListener listener) {
         myListener = listener;
@@ -28,35 +27,35 @@ public class CreateGroupDialogFragment extends DialogFragment {
         // Get the layout inflater
         final LayoutInflater inflater = getActivity().getLayoutInflater();
 
-        View myView = inflater.inflate(R.layout.dialog_create_group, null);
-        groupNameEditText = (EditText) myView.findViewById(R.id.group_name_edit_text);
-        passwordEditText = (EditText) myView.findViewById(R.id.group_password_edit_text);
+        View myView = inflater.inflate(R.layout.dialog_number_required, null);
+
+        numPicker = (NumberPicker) myView.findViewById(R.id.numberPicker);
+        numPicker.setMaxValue(100);
+        numPicker.setMinValue(1);
+
+        builder.setTitle("Number Required for Shift");
 
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
         builder.setView(myView)
                 // Add action buttons
-                .setPositiveButton("Create", new DialogInterface.OnClickListener() {
+                .setPositiveButton("Assign", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        myListener.onDialogPositiveClick(CreateGroupDialogFragment.this);
-                        CreateGroupDialogFragment.this.getDialog().dismiss();
+                        myListener.onDialogPositiveClick(PickerDialogFragment.this);
+                        PickerDialogFragment.this.getDialog().dismiss();
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        myListener.onDialogNegativeClick(CreateGroupDialogFragment.this);
-                        CreateGroupDialogFragment.this.getDialog().cancel();
+                        PickerDialogFragment.this.getDialog().cancel();
                     }
                 });
         return builder.create();
     }
 
-    public EditText getGroupNameEditText() {
-        return groupNameEditText;
+    public NumberPicker getNumPicker() {
+        return numPicker;
     }
 
-    public EditText getPasswordEditText() {
-        return passwordEditText;
-    }
 }

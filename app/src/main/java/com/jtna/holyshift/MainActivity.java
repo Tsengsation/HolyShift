@@ -3,6 +3,7 @@ package com.jtna.holyshift;
 import android.app.ActionBar;
 import android.app.ProgressDialog;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -14,19 +15,23 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.jtna.holyshift.GroupTabbedView.GroupFragment;
 import com.jtna.holyshift.backend.Availability;
 import com.jtna.holyshift.backend.AvailabilitySlot;
+import com.jtna.holyshift.backend.Day;
+import com.jtna.holyshift.backend.Shift;
 import com.jtna.holyshift.backend.TimeSlot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class MainActivity extends FragmentActivity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks,
-        CreateGroupDialogFragment.DialogListener{
+        implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
     private Availability myAvail;
 
@@ -70,7 +75,8 @@ public class MainActivity extends FragmentActivity
         if (fragmentName.equals(getResources().getString(R.string.my_groups))) {
             fragment = GroupFragment.newInstance("");
         } else if (fragmentName.equals(getResources().getString(R.string.new_group))) {
-            DialogFragment newFragment = new CreateGroupDialogFragment();
+            CreateGroupDialogFragment newFragment = new CreateGroupDialogFragment();
+            newFragment.setDialogListener(getDialogListener());
             newFragment.show(getSupportFragmentManager(), getString(R.string.new_group));
         } else if (fragmentName.equals(getResources().getString(R.string.search_groups))) {
             fragment = SearchGroupsFragment.newInstance();
@@ -97,8 +103,10 @@ public class MainActivity extends FragmentActivity
 
     private void initAvailabilityCalendar(CalendarFragment fragment) {
         fragment.setCells(getAvailableTimeSlots());
-        fragment.setSelectedColor(Color.GREEN);
-        fragment.setUnselectedColor(Color.RED);
+        final int selectedColor = Color.GREEN;
+        final int unselectedColor = Color.RED;
+        fragment.setSelectedColor(selectedColor);
+        fragment.setUnselectedColor(unselectedColor);
         fragment.setSaveListener(new CalendarListener() {
             @Override
             public void onSaveClicked(CalendarFragment cal) {
@@ -118,6 +126,20 @@ public class MainActivity extends FragmentActivity
                     }
                 }
                 myAvail.saveInBackground();
+            }
+
+            @Override
+            public void onCellClicked(CalendarFragment cal, CalendarCell cell) {
+                int color = ((ColorDrawable) cell.getBackground()).getColor();
+                TimeSlot slot = new TimeSlot(Day.values()[cell.getMyDay()],
+                        cell.getMyHour());
+                if (color == selectedColor) {
+                    cell.setBackgroundColor(unselectedColor);
+                    cal.getSelectedCells().remove(slot);
+                } else {
+                    cell.setBackgroundColor(selectedColor);
+                    cal.getSelectedCells().add(slot);
+                }
             }
         });
     }
@@ -164,34 +186,93 @@ public class MainActivity extends FragmentActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onDialogPositiveClick(DialogFragment dialog) {
-        CreateGroupDialogFragment myDialog = (CreateGroupDialogFragment) dialog;
-        EditText name = myDialog.getGroupNameEditText();
-        EditText password = myDialog.getPasswordEditText();
-
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        CalendarFragment fragment = CalendarFragment.newInstance();
-        fragment.setSaveListener(new CalendarListener() {
+    private DialogListener getDialogListener() {
+        return new DialogListener() {
+            @Override
+            public void onDialogNegativeClick(DialogFragment dialog) {
+                //do nothing
+            }
 
             @Override
-            public void onSaveClicked(CalendarFragment cal) {
-                // TODO: create group with given shifts here
-                // fragment.setGroupNameAndPassword(name.getText().toString(), password.getText().toString());
+            public void onDialogPositiveClick(DialogFragment dialog) {
+                CreateGroupDialogFragment myDialog = (CreateGroupDialogFragment) dialog;
+                final EditText name = myDialog.getGroupNameEditText();
+                final EditText password = myDialog.getPasswordEditText();
+
+                if (name.getText().toString().isEmpty() || password.getText().toString().isEmpty()) {
+                    Toast.makeText(MainActivity.this, "Please fill in information", Toast.LENGTH_LONG);
+                    return;
+                }
+
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                final CalendarFragment fragment = CalendarFragment.newInstance();
+                fragment.setCells(new ArrayList<TimeSlot>());
+                final int selectedColor = Color.BLUE;
+                final int unselectedColor = Color.GRAY;
+                fragment.setSelectedColor(selectedColor);
+                fragment.setUnselectedColor(unselectedColor);
+                fragment.setSaveListener(new CalendarListener() {
+                    Map<TimeSlot, Integer> map = new HashMap<>();
+
+                    @Override
+                    public void onSaveClicked(CalendarFragment cal) {
+                        List<Shift> shifts = new ArrayList<Shift>();
+                        for (TimeSlot slot: map.keySet()) {
+                            shifts.add(new Shift(slot, map.get(slot)));
+                        }
+                        ParseUtility.createGroup(name.getText().toString(),
+                                password.getText().toString(), shifts);
+                        getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.container, GroupFragment.newInstance(""))
+                                .commit();
+                    }
+
+                    @Override
+                    public void onCellClicked(final CalendarFragment cal, final CalendarCell cell) {
+                        int color = ((ColorDrawable) cell.getBackground()).getColor();
+                        final TimeSlot slot = new TimeSlot(Day.values()[cell.getMyDay()],
+                                cell.getMyHour());
+                        if (color == selectedColor) {
+                            cell.setBackgroundColor(unselectedColor);
+                            cal.getSelectedCells().remove(slot);
+                            map.remove(slot);
+                        } else {
+                            cell.setBackgroundColor(selectedColor);
+
+                            PickerDialogFragment newFragment = new PickerDialogFragment();
+                            newFragment.setDialogListener(new DialogListener() {
+                                @Override
+                                public void onDialogPositiveClick(DialogFragment dialog) {
+                                    PickerDialogFragment frag = (PickerDialogFragment) dialog;
+                                    map.put(slot, frag.getNumPicker().getValue());
+                                }
+
+                                @Override
+                                public void onDialogNegativeClick(DialogFragment dialog) {
+                                    cell.setBackgroundColor(unselectedColor);
+                                    cal.getSelectedCells().remove(slot);
+                                }
+                            });
+                            newFragment.show(getSupportFragmentManager(), getString(R.string.new_group));
+                            cal.getSelectedCells().add(slot);
+                        }
+                    }
+                });
+
+                mTitle = getString(R.string.new_group);
+
+                if (fragment != null) {
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.container, fragment)
+                            .commit();
+                } else {
+                    // error in creating fragment
+                    Log.e("MainActivity", "Error in creating fragment");
+                }
             }
-        });
-
-        mTitle = getString(R.string.new_group);
-
-        if (fragment != null) {
-            fragmentManager.beginTransaction()
-                    .replace(R.id.container, fragment)
-                    .commit();
-        } else {
-            // error in creating fragment
-            Log.e("MainActivity", "Error in creating fragment");
-        }
+        };
     }
+
 
     private class FetchDataTask extends AsyncTask<Void, Integer, Availability> {
         private ProgressDialog dialog;

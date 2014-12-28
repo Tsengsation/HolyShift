@@ -20,6 +20,10 @@ public class Shift extends TimeSlot {
         super();
     }
 
+    public Shift(TimeSlot slot, int required) {
+        this(slot.getMyDay(), slot.getStartHr(), required);
+    }
+
     public Shift(Day d, int hr, int required) {
         super(d, hr);
         setNumRequired(required);
