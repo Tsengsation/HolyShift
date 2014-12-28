@@ -1,8 +1,7 @@
 package com.jtna.holyshift;
 
-import android.app.ProgressDialog;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -47,16 +46,22 @@ public class SearchGroupsFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
+
     public SearchGroupsFragment() {
         // Required empty public constructor
+    }
+
+    public void setGroups(List<Group> groups) {
+        myGroups = groups;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         myGroupNames = new ArrayList<String>();
-        FetchGroupTask task = new FetchGroupTask();
-        task.execute();
+        for (Group g: myGroups) {
+            myGroupNames.add(g.getGroupName());
+        }
     }
 
     private void initializeComponents(View rootView) {
@@ -67,8 +72,28 @@ public class SearchGroupsFragment extends Fragment {
         mGroupsListView.setAdapter(adapter);
         mGroupsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getActivity(), "yay " + mGroupsListView.getAdapter().getItem(position), Toast.LENGTH_SHORT).show(); ;
+            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+                JoinGroupDialogFragment newFragment = new JoinGroupDialogFragment();
+                newFragment.setDialogListener(new DialogListener() {
+                    @Override
+                    public void onDialogPositiveClick(DialogFragment dialog) {
+                        JoinGroupDialogFragment frag = (JoinGroupDialogFragment) dialog;
+                        boolean success = ParseUtility.joinGroup(frag.getPasswordEditText().getText().toString(),
+                                myGroups.get(position));
+                        if (success) {
+                            Toast.makeText(getActivity(), "Success!", Toast.LENGTH_SHORT);
+                        }
+                        else {
+                            Toast.makeText(getActivity(), "Unable to Join Group.", Toast.LENGTH_SHORT);
+                        }
+                    }
+
+                    @Override
+                    public void onDialogNegativeClick(DialogFragment dialog) {
+                        // do nothing
+                    }
+                });
+                newFragment.show(getActivity().getSupportFragmentManager(), getString(R.string.join_group));
             }
         });
         mSearchEditText.addTextChangedListener(new TextWatcher() {
@@ -93,35 +118,6 @@ public class SearchGroupsFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_search_groups, container, false);
         initializeComponents(rootView);
         return rootView;
-    }
-
-    private class FetchGroupTask extends AsyncTask<Void, Integer, List<Group>> {
-        private ProgressDialog dialog;
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            dialog = new ProgressDialog(getActivity());
-            dialog.setMessage("Fetching Data From Server...");
-            dialog.setCancelable(false);
-            dialog.setCanceledOnTouchOutside(false);
-            dialog.show();
-        }
-
-        @Override
-        protected List<Group> doInBackground(Void... params) {
-            return ParseUtility.getAllGroups();
-        }
-
-        @Override
-        protected void onPostExecute(List<Group> groups) {
-            myGroups = groups;
-            for (Group g: myGroups) {
-                myGroupNames.add(g.getGroupName());
-            }
-            adapter.notifyDataSetChanged();
-            dialog.dismiss();
-        }
     }
 
 }

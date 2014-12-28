@@ -21,6 +21,7 @@ import com.jtna.holyshift.GroupTabbedView.GroupFragment;
 import com.jtna.holyshift.backend.Availability;
 import com.jtna.holyshift.backend.AvailabilitySlot;
 import com.jtna.holyshift.backend.Day;
+import com.jtna.holyshift.backend.Group;
 import com.jtna.holyshift.backend.Shift;
 import com.jtna.holyshift.backend.TimeSlot;
 
@@ -34,6 +35,7 @@ public class MainActivity extends FragmentActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
     private Availability myAvail;
+    private List<Group> allGroups;
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -80,13 +82,12 @@ public class MainActivity extends FragmentActivity
             newFragment.show(getSupportFragmentManager(), getString(R.string.new_group));
         } else if (fragmentName.equals(getResources().getString(R.string.search_groups))) {
             fragment = SearchGroupsFragment.newInstance();
+            ((SearchGroupsFragment) fragment).setGroups(allGroups);
         } else if (fragmentName.equals(getResources().getString(R.string.my_availability))) {
             fragment = CalendarFragment.newInstance();
             initAvailabilityCalendar((CalendarFragment) fragment);
         } else if (fragmentName.equals(getString(R.string.profile_fragment))) {
             fragment = ProfileFragment.newInstance();
-        } else if (fragmentName.equals(getString(R.string.parse_test_fragment))) {
-            fragment = ParseTestFragment.newInstance();
         }
 
         mTitle = fragmentName;
@@ -274,7 +275,7 @@ public class MainActivity extends FragmentActivity
     }
 
 
-    private class FetchDataTask extends AsyncTask<Void, Integer, Availability> {
+    private class FetchDataTask extends AsyncTask<Void, Void, Void> {
         private ProgressDialog dialog;
 
         @Override
@@ -288,13 +289,14 @@ public class MainActivity extends FragmentActivity
         }
 
         @Override
-        protected Availability doInBackground(Void... params) {
-            return ParseUtility.getAvailability();
+        protected Void doInBackground(Void... params) {
+            myAvail = ParseUtility.getAvailability();
+            allGroups = ParseUtility.getAllGroups();
+            return null;
         }
 
         @Override
-        protected void onPostExecute(Availability avail) {
-            myAvail = avail;
+        protected void onPostExecute(Void v) {
             dialog.dismiss();
         }
     }

@@ -52,16 +52,31 @@ public class ParseUtility {
     public static List<Group> getAllGroups() {
         ParseQuery<Group> query = Group.getQuery();
         try {
-            return query.find();
+            List<Group> groups = query.find();
+            if (!groups.isEmpty()) {
+                for (Group g : groups) {
+                    g.fetchIfNeeded();
+                    // TODO: add fetching
+//                    for (Shift s : g.getMyShifts()) {
+//                        s.fetchIfNeeded();
+//                    }
+                }
+            }
+            return groups;
         }
         catch (ParseException e) {
             return new ArrayList<>();
         }
     }
 
-    public static void joinGroup(Group group) {
-        group.addUser(ParseUser.getCurrentUser());
-        group.saveInBackground();
+    public static boolean joinGroup(String password, Group group) {
+        ParseUser me = ParseUser.getCurrentUser();
+        if (!group.getUsers().contains(me) && group.getPassword().equals(password)) {
+            group.addUser(me);
+            group.saveInBackground();
+            return true;
+        }
+        return false;
     }
 
     public static List<Group> getMyGroups() {
