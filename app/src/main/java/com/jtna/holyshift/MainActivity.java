@@ -18,10 +18,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.jtna.holyshift.GroupTabbedView.GroupFragment;
-import com.jtna.holyshift.backend.Availability;
 import com.jtna.holyshift.backend.AvailabilitySlot;
 import com.jtna.holyshift.backend.Day;
-import com.jtna.holyshift.backend.Group;
 import com.jtna.holyshift.backend.Shift;
 import com.jtna.holyshift.backend.TimeSlot;
 
@@ -34,8 +32,7 @@ import java.util.Map;
 public class MainActivity extends FragmentActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
-    private Availability myAvail;
-    private List<Group> allGroups;
+    private ParseUtility utility;
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -50,6 +47,11 @@ public class MainActivity extends FragmentActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        utility = ParseUtility.getInstance();
+        FetchDataTask fetchDataTask = new FetchDataTask();
+        fetchDataTask.execute();
+
         setContentView(R.layout.activity_main);
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
@@ -60,8 +62,6 @@ public class MainActivity extends FragmentActivity
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
-        FetchDataTask fetchDataTask = new FetchDataTask();
-        fetchDataTask.execute();
     }
 
     @Override
@@ -75,14 +75,15 @@ public class MainActivity extends FragmentActivity
         String fragmentName = getResources().getStringArray(R.array.navigation_drawer_strings)[position];
         Fragment fragment = null;
         if (fragmentName.equals(getResources().getString(R.string.my_groups))) {
-            fragment = GroupFragment.newInstance("");
+            fragment = MyGroupsFragment.newInstance();
+            ((MyGroupsFragment) fragment).setGroups(utility.getMyGroups());
         } else if (fragmentName.equals(getResources().getString(R.string.new_group))) {
             CreateGroupDialogFragment newFragment = new CreateGroupDialogFragment();
             newFragment.setDialogListener(getDialogListener());
             newFragment.show(getSupportFragmentManager(), getString(R.string.new_group));
         } else if (fragmentName.equals(getResources().getString(R.string.search_groups))) {
             fragment = SearchGroupsFragment.newInstance();
-            ((SearchGroupsFragment) fragment).setGroups(allGroups);
+            ((SearchGroupsFragment) fragment).setGroups(utility.getAllGroups());
         } else if (fragmentName.equals(getResources().getString(R.string.my_availability))) {
             fragment = CalendarFragment.newInstance();
             initAvailabilityCalendar((CalendarFragment) fragment);
@@ -112,7 +113,7 @@ public class MainActivity extends FragmentActivity
             @Override
             public void onSaveClicked(CalendarFragment cal) {
                 List<TimeSlot> selected = cal.getSelectedCells();
-                for (AvailabilitySlot availSlot: myAvail.getSlots()) {
+                for (AvailabilitySlot availSlot: utility.getMyAvailability().getSlots()) {
                     boolean isSelected = false;
                     for (TimeSlot slot: selected) {
                         if (slot.getMyDay().equals(availSlot.getMyDay())
@@ -126,7 +127,7 @@ public class MainActivity extends FragmentActivity
                         availSlot.saveInBackground();
                     }
                 }
-                myAvail.saveInBackground();
+                utility.getMyAvailability().saveInBackground();
             }
 
             @Override
@@ -146,7 +147,7 @@ public class MainActivity extends FragmentActivity
     }
 
     private List<TimeSlot> getAvailableTimeSlots() {
-        List<AvailabilitySlot> selected = myAvail.getSlots();
+        List<AvailabilitySlot> selected = utility.getMyAvailability().getSlots();
 
         List<TimeSlot> selectedSlots = new ArrayList<>();
         for (AvailabilitySlot slot: selected) {
@@ -201,7 +202,7 @@ public class MainActivity extends FragmentActivity
                 final EditText password = myDialog.getPasswordEditText();
 
                 if (name.getText().toString().isEmpty() || password.getText().toString().isEmpty()) {
-                    Toast.makeText(MainActivity.this, "Please fill in information", Toast.LENGTH_LONG);
+                    Toast.makeText(MainActivity.this, "Please fill in information", Toast.LENGTH_LONG).show();
                     return;
                 }
 
@@ -221,10 +222,10 @@ public class MainActivity extends FragmentActivity
                         for (TimeSlot slot: map.keySet()) {
                             shifts.add(new Shift(slot, map.get(slot)));
                         }
-                        ParseUtility.createGroup(name.getText().toString(),
+                        utility.createGroup(name.getText().toString(),
                                 password.getText().toString(), shifts);
                         getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.container, GroupFragment.newInstance(""))
+                                .replace(R.id.container, GroupFragment.newInstance(name.getText().toString()))
                                 .commit();
                     }
 
@@ -238,23 +239,22 @@ public class MainActivity extends FragmentActivity
                             cal.getSelectedCells().remove(slot);
                             map.remove(slot);
                         } else {
-                            cell.setBackgroundColor(selectedColor);
-
                             PickerDialogFragment newFragment = new PickerDialogFragment();
                             newFragment.setDialogListener(new DialogListener() {
                                 @Override
                                 public void onDialogPositiveClick(DialogFragment dialog) {
                                     PickerDialogFragment frag = (PickerDialogFragment) dialog;
                                     map.put(slot, frag.getNumPicker().getValue());
+                                    cell.setBackgroundColor(selectedColor);
                                 }
 
                                 @Override
                                 public void onDialogNegativeClick(DialogFragment dialog) {
-                                    cell.setBackgroundColor(unselectedColor);
                                     cal.getSelectedCells().remove(slot);
+                                    cell.setBackgroundColor(unselectedColor);
                                 }
                             });
-                            newFragment.show(getSupportFragmentManager(), getString(R.string.new_group));
+                            newFragment.show(getSupportFragmentManager(), "Create New Shift");
                             cal.getSelectedCells().add(slot);
                         }
                     }
@@ -290,8 +290,7 @@ public class MainActivity extends FragmentActivity
 
         @Override
         protected Void doInBackground(Void... params) {
-            myAvail = ParseUtility.getAvailability();
-            allGroups = ParseUtility.getAllGroups();
+            utility.fetchData();
             return null;
         }
 

@@ -22,6 +22,8 @@ import java.util.List;
  */
 public class MembersListTab extends Fragment {
     private static final String ARG_GROUPNAME = "groupName";
+    private String mGroupName;
+
     private ListView mMembersListView;
 
     /**
@@ -39,6 +41,14 @@ public class MembersListTab extends Fragment {
 
     public MembersListTab() {
         // TODO: Query for members list
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            mGroupName = getArguments().getString(ARG_GROUPNAME);
+        }
     }
 
     @Override

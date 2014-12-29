@@ -19,6 +19,7 @@ import com.jtna.holyshift.R;
  */
 public class GroupSettingsTab extends Fragment {
     private static final String ARG_GROUPNAME = "groupName";
+    private String mGroupName;
 
     private EditText mPasswordEditText;
     private Button mUpdateButton;
@@ -37,6 +38,14 @@ public class GroupSettingsTab extends Fragment {
     }
     public GroupSettingsTab() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            mGroupName = getArguments().getString(ARG_GROUPNAME);
+        }
     }
 
     @Override

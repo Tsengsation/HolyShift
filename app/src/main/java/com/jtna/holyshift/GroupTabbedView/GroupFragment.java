@@ -63,15 +63,18 @@ public class GroupFragment extends Fragment {
         mTabHost = (FragmentTabHost) root.findViewById(android.R.id.tabhost);
         mTabHost.setup(getActivity(), getChildFragmentManager(), R.id.tabcontent);
 
+        Bundle args = new Bundle();
+        args.putString(ARG_GROUPNAME, mGroupName);
         mTabHost.addTab(mTabHost.newTabSpec(getString(R.string.group_members))
-                .setIndicator(getString(R.string.group_members)), MembersListTab.class, null);
+                .setIndicator(getString(R.string.group_members)), MembersListTab.class, args);
 
+        //TODO: this definetely doesn't work right now
         mTabHost.addTab(mTabHost.newTabSpec(getString(R.string.group_shifts))
                 .setIndicator(getString(R.string.group_shifts)),
-                CalendarFragment.class, null);
+                CalendarFragment.class, args);
 
         mTabHost.addTab(mTabHost.newTabSpec(getString(R.string.group_settings))
-                .setIndicator(getString(R.string.group_settings)), GroupSettingsTab.class, null);
+                .setIndicator(getString(R.string.group_settings)), GroupSettingsTab.class, args);
     }
 
 }

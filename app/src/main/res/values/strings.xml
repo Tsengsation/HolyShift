@@ -13,11 +13,11 @@
     <string name="profile_fragment">My Profile</string>
 
     <string-array name="navigation_drawer_strings">
+        <item>@string/profile_fragment</item>
         <item>@string/my_groups</item>
         <item>@string/new_group</item>
         <item>@string/search_groups</item>
         <item>@string/my_availability</item>
-        <item>@string/profile_fragment</item>
     </string-array>
 
     <string name="action_settings">Settings</string>

@@ -1,7 +1,6 @@
 package com.jtna.holyshift;
 
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -14,6 +13,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.jtna.holyshift.GroupTabbedView.GroupFragment;
 import com.jtna.holyshift.backend.Group;
 
 import java.util.ArrayList;
@@ -21,12 +21,12 @@ import java.util.List;
 
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link SearchGroupsFragment#newInstance} factory method to
+ * A simple {@link android.support.v4.app.Fragment} subclass.
+ * Use the {@link com.jtna.holyshift.MyGroupsFragment#newInstance} factory method to
  * create an instance of this fragment.
  *
  */
-public class SearchGroupsFragment extends Fragment {
+public class MyGroupsFragment extends Fragment {
 
     private EditText mSearchEditText;
     private ListView mGroupsListView;
@@ -40,14 +40,14 @@ public class SearchGroupsFragment extends Fragment {
      *
      * @return A new instance of fragment SearchGroupsFragment.
      */
-    public static SearchGroupsFragment newInstance() {
-        SearchGroupsFragment fragment = new SearchGroupsFragment();
+    public static MyGroupsFragment newInstance() {
+        MyGroupsFragment fragment = new MyGroupsFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
     }
 
-    public SearchGroupsFragment() {
+    public MyGroupsFragment() {
         // Required empty public constructor
     }
 
@@ -73,38 +73,20 @@ public class SearchGroupsFragment extends Fragment {
         mGroupsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
-                JoinGroupDialogFragment newFragment = new JoinGroupDialogFragment();
-                newFragment.setDialogListener(new DialogListener() {
-                    @Override
-                    public void onDialogPositiveClick(DialogFragment dialog) {
-                        JoinGroupDialogFragment frag = (JoinGroupDialogFragment) dialog;
-                        ParseUtility utility = ParseUtility.getInstance();
-                        boolean success = utility.joinGroup(frag.getPasswordEditText().getText().toString(),
-                                myGroups.get(position));
-                        if (success) {
-                            Toast.makeText(getActivity(), "Success!", Toast.LENGTH_SHORT).show();
-                        }
-                        else {
-                            Toast.makeText(getActivity(), "Unable to Join Group.", Toast.LENGTH_SHORT).show();
-                        }
-                    }
+                GroupFragment fragment = GroupFragment.newInstance(myGroups.get(position).getGroupName());
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.container, fragment)
+                        .commit();
 
-                    @Override
-                    public void onDialogNegativeClick(DialogFragment dialog) {
-                        // do nothing
-                    }
-                });
-                newFragment.show(getActivity().getSupportFragmentManager(), getString(R.string.join_group));
+                Toast.makeText(getActivity(), "Open Group view", Toast.LENGTH_SHORT).show();
             }
         });
         mSearchEditText.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
             @Override
             public void afterTextChanged(Editable s) {
@@ -116,7 +98,7 @@ public class SearchGroupsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_search_groups, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_my_groups, container, false);
         initializeComponents(rootView);
         return rootView;
     }
